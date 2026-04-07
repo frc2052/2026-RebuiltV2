@@ -250,20 +250,9 @@ public abstract class ServoSubsystem extends SubsystemBase {
     }
   }
 
-  // int periodicCycles = 0;
-
   @Override
   public void periodic() {
-
-    // periodicCycles++;
-    // if (periodicCycles >= Constants.STATUS_LOOP_COUNT) {
-    // System.out.println("cycled, refreshing now " + constants.name);
     BaseStatusSignal.refreshAll(motorSignals);
-    //   periodicCycles = 0;
-    // }
-
-    //// Logger.recordOutput(constants.name + "/Demand", demand);
-    //// Logger.recordOutput(constants.name + "/Error", demand - getPosition().in(Degrees));
     writeToMotor();
   }
 

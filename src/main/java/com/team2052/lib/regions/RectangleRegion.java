@@ -19,9 +19,4 @@ public class RectangleRegion implements Region {
     return region.contains(point);
   }
 
-  @Override
-  public void logRegion(String folder) {
-    if (!folder.endsWith("/")) folder += "/";
-    // Logger.recordOutput(folder + "RectangleRegion/Rectangle", region);
-  }
 }

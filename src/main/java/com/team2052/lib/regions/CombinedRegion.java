@@ -34,11 +34,4 @@ public class CombinedRegion implements Region {
     return false;
   }
 
-  @Override
-  public void logRegion(String folder) {
-    if (!folder.endsWith("/")) folder += "/";
-    for (int i = 0; i < regions.length; i++) {
-      regions[i].logRegion(folder + "Region_" + i);
-    }
-  }
 }

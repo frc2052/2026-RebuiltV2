@@ -15,6 +15,4 @@ public abstract interface Region {
   public default boolean isPointOutsideRegion(Translation2d point) {
     return !isPointInRegion(point);
   }
-
-  public abstract void logRegion(String folder);
 }

@@ -19,10 +19,4 @@ public class CircleRegion implements Region {
     return center.getDistance(point) <= radius.in(Meters);
   }
 
-  @Override
-  public void logRegion(String folder) {
-    if (!folder.endsWith("/")) folder += "/";
-    // Logger.recordOutput(folder + "CircleRegion/Center", center);
-    // Logger.recordOutput(folder + "CircleRegion/Radius", radius);
-  }
 }
