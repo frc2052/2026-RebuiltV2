@@ -34,9 +34,9 @@ public final class ShooterConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 1;
+    ROLLER_CONFIG.slot0kP = 1.5;
     ROLLER_CONFIG.slot0kI = 0;
-    ROLLER_CONFIG.slot0kD = 0;
+    ROLLER_CONFIG.slot0kD = 0.1;
     ROLLER_CONFIG.slot0kS = 0;
     ROLLER_CONFIG.slot0kV = 0;
     ROLLER_CONFIG.slot0kA = 0;
