@@ -4,8 +4,8 @@ import com.team2052.lib.subsystems.CANCoderConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemWithCANCoder;
 
-public class HoodSubsystem extends ServoSubsystemWithCANCoder{
-    private HoodSubsystem(ServoSubsystemConstants constants, CANCoderConstants canCoderConstants) {
+public class HoodSubsystem extends ServoSubsystemWithCANCoder {
+  private HoodSubsystem(ServoSubsystemConstants constants, CANCoderConstants canCoderConstants) {
     super(constants, canCoderConstants);
   }
 

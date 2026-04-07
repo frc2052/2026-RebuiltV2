@@ -33,5 +33,4 @@ public class CombinedRegion implements Region {
     }
     return false;
   }
-
 }

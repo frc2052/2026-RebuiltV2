@@ -18,5 +18,4 @@ public class CircleRegion implements Region {
   public boolean isPointInRegion(Translation2d point) {
     return center.getDistance(point) <= radius.in(Meters);
   }
-
 }

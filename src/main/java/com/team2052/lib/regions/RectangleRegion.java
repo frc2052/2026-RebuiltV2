@@ -18,5 +18,4 @@ public class RectangleRegion implements Region {
   public boolean isPointInRegion(Translation2d point) {
     return region.contains(point);
   }
-
 }

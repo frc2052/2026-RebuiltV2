@@ -3,20 +3,21 @@ package frc.robot.subsystems.floor;
 import com.team2052.lib.subsystems.RollerSubsystem;
 
 public class FloorSubsystem extends RollerSubsystem {
-    private static FloorSubsystem INSTANCE;
-    public static FloorSubsystem getInstance() {
-        if (INSTANCE == null) {
-        INSTANCE = new FloorSubsystem();
-        }
-        return INSTANCE;
-    }
+  private static FloorSubsystem INSTANCE;
 
-    public FloorSubsystem() {
-        super(FloorConstants.ROLLER_CONFIG);
+  public static FloorSubsystem getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new FloorSubsystem();
     }
+    return INSTANCE;
+  }
 
-    @Override
-    public void periodic() {
-        super.periodic();
-    }
+  public FloorSubsystem() {
+    super(FloorConstants.ROLLER_CONFIG);
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+  }
 }
