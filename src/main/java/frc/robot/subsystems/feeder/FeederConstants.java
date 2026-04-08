@@ -1,22 +1,24 @@
-package frc.robot.subsystems.stager;
+package frc.robot.subsystems.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team2052.lib.subsystems.RollerSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants.TalonFXConstants;
 import frc.robot.util.Ports;
 
-public class StagerConstants {
+public class FeederConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
 
   static {
-    ROLLER_CONFIG.name = "Stager";
+    ROLLER_CONFIG.name = "Feeder";
     ROLLER_CONFIG.leaderTalonFXConstants =
         new TalonFXConstants()
-            .withId(Ports.STAGER_TOP_MOTOR.getFirst())
-            .withBus(Ports.STAGER_TOP_MOTOR.getSecond());
+            .withId(Ports.STAGER_BOTTOM_MOTOR.getFirst())
+            .withBus(Ports.STAGER_BOTTOM_MOTOR.getSecond())
+            .withInvertMotorOutput(MotorAlignmentValue.Aligned);
 
     ROLLER_CONFIG.slot0kP = 1.6;
     ROLLER_CONFIG.slot0kI = 0;

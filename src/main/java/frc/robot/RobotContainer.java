@@ -8,12 +8,14 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.team2052.lib.input.T16000MJoystick;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.feeder.FeederSubsystem;
 import frc.robot.subsystems.floor.FloorSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 
 public class RobotContainer {
   public final FloorSubsystem floor = FloorSubsystem.getInstance();
+  public final FeederSubsystem feeder = FeederSubsystem.getInstance();
   public final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
   public final StagerSubsystem stager = StagerSubsystem.getInstance();
 
@@ -28,13 +30,25 @@ public class RobotContainer {
     translationJoystick
         .button(1)
         .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(40)));
+
     rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(55)));
-    rotationJoystick.button(2).whileTrue(floor.runAtPctCommand(0.75));
+    rotationJoystick
+        .button(2)
+        .whileTrue(
+            Commands.parallel(
+                floor.runAtPctCommand(0.75)));
+    rotationJoystick
+        .button(4)
+        .whileTrue(
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(55))));
+
     rotationJoystick
         .button(3)
         .whileTrue(
             Commands.parallel(
                 stager.runAtVelocityCommand(RotationsPerSecond.of(-55)),
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(-55)),
                 floor.runAtPctCommand(-0.75)));
   }
 }
