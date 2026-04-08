@@ -6,13 +6,14 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.*;
+import frc.robot.Constants;
 
 public class ServoSubsystemConstants {
   public String name = "UNNAMED_MOTOR";
   public TalonFXConstants leaderTalonFXConstants = new TalonFXConstants();
   public TalonFXConstants[] followerTalonFXConstants = new TalonFXConstants[0];
 
-  public double loopTime = 0.02;
+  public double loopTime = Constants.MAIN_LOOP_PERIOD.in(Seconds);
   public Time timeout = Milliseconds.of(100);
 
   public NeutralModeValue neutralMode = NeutralModeValue.Brake;
