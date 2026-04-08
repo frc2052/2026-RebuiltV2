@@ -25,4 +25,10 @@ public class Ports {
 
   public static final Pair<Integer, CANBus> HOOD_MOTOR = Pair.of(3, MAIN_BUS);
   public static final Pair<Integer, CANBus> HOOD_ENCODER = Pair.of(10, MAIN_BUS);
+
+  public static final Pair<Integer, CANBus> LEFT_INTAKE_MOTOR = Pair.of(11, MAIN_BUS);
+  public static final Pair<Integer, CANBus> RIGHT_INTAKE_MOTOR = Pair.of(12, MAIN_BUS);
+
+  public static final Pair<Integer, CANBus> INTAKE_ENCODER = Pair.of(13, MAIN_BUS);
+  public static final Pair<Integer, CANBus> INTAKE_PIVOT_MOTOR = Pair.of(14, MAIN_BUS);
 }
