@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.team2052.lib.input.T16000MJoystick;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.floor.FloorSubsystem;
@@ -23,9 +25,16 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    translationJoystick.button(1).whileTrue(shooter.runAtPctCommand(0.6));
-    rotationJoystick
+    translationJoystick
         .button(1)
-        .whileTrue(Commands.parallel(stager.runAtPctCommand(1), floor.runAtPctCommand(1.0)));
+        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(40)));
+    rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(55)));
+    rotationJoystick.button(2).whileTrue(floor.runAtPctCommand(0.75));
+    rotationJoystick
+        .button(3)
+        .whileTrue(
+            Commands.parallel(
+                stager.runAtVelocityCommand(RotationsPerSecond.of(-55)),
+                floor.runAtPctCommand(-0.75)));
   }
 }

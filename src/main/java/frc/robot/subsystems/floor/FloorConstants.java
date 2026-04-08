@@ -40,7 +40,7 @@ public final class FloorConstants {
     ROLLER_CONFIG.neutralMode = NeutralModeValue.Coast;
     ROLLER_CONFIG.slot0kDeadband = 0.05;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
-    ROLLER_CONFIG.statorCurrentLimit = Amps.of(80);
+    ROLLER_CONFIG.statorCurrentLimit = Amps.of(40);
     ROLLER_CONFIG.enableStatorCurrentLimit = true;
   }
 }

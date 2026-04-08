@@ -26,7 +26,8 @@ import java.util.OptionalDouble;
 
 public class VisionSubsystem extends SubsystemBase {
   private StatusSignal<Angle> yawSignal = DrivetrainSubsystem.getInstance().getPigeon2().getYaw();
-  private StatusSignal<Angle> pitchSignal = DrivetrainSubsystem.getInstance().getPigeon2().getPitch();
+  private StatusSignal<Angle> pitchSignal =
+      DrivetrainSubsystem.getInstance().getPigeon2().getPitch();
   private StatusSignal<Angle> rollSignal = DrivetrainSubsystem.getInstance().getPigeon2().getRoll();
 
   private PoseEstimate previousChassisEstimate;
@@ -62,17 +63,17 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-      filter(readMT1(LimelightCamera.CHASSIS, previousChassisEstimate))
-          .ifPresent(
-              e -> {
-                RobotState.getInstance().setChassisVisionFieldPose(e.pose);
-                DrivetrainSubsystem.getInstance()
-                    .addVisionMeasurement(
-                        e.pose,
-                        Utils.fpgaToCurrentTime(e.timestampSeconds),
-                        calculateStandardDeviation(e));
-              });
-      pushYaw(LimelightCamera.CHASSIS);
+    filter(readMT1(LimelightCamera.CHASSIS, previousChassisEstimate))
+        .ifPresent(
+            e -> {
+              RobotState.getInstance().setChassisVisionFieldPose(e.pose);
+              DrivetrainSubsystem.getInstance()
+                  .addVisionMeasurement(
+                      e.pose,
+                      Utils.fpgaToCurrentTime(e.timestampSeconds),
+                      calculateStandardDeviation(e));
+            });
+    pushYaw(LimelightCamera.CHASSIS);
 
     NetworkTableInstance.getDefault().flush();
   }
@@ -178,7 +179,6 @@ public class VisionSubsystem extends SubsystemBase {
     return VecBuilder.fill(stdDev, stdDev, headingStdDev);
   }
 
- 
   public enum LimelightCamera {
     CHASSIS(ChassisLimelightConstants.CAMERA_NAME);
 

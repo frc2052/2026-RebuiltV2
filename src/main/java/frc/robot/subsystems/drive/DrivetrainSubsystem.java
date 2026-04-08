@@ -247,6 +247,7 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
 
   /* The SysId routine to test */
   private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+
   /**
    * Runs the SysId Quasistatic test in the given direction for the routine specified by {@link
    * #m_sysIdRoutineToApply}.

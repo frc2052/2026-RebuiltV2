@@ -34,11 +34,11 @@ public final class ShooterConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 0.4;
+    ROLLER_CONFIG.slot0kP = 9;
     ROLLER_CONFIG.slot0kI = 0;
-    ROLLER_CONFIG.slot0kD = 0;
-    ROLLER_CONFIG.slot0kS = 0.5;
-    ROLLER_CONFIG.slot0kV = 0.019;
+    ROLLER_CONFIG.slot0kD = 0.12;
+    ROLLER_CONFIG.slot0kS = 0.3;
+    ROLLER_CONFIG.slot0kV = 0.0;
     ROLLER_CONFIG.slot0kA = 0;
 
     ROLLER_CONFIG.followerRateHz = 1000;
@@ -48,7 +48,9 @@ public final class ShooterConstants {
     ROLLER_CONFIG.neutralMode = NeutralModeValue.Coast;
     ROLLER_CONFIG.slot0kDeadband = 0.05;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
-    ROLLER_CONFIG.statorCurrentLimit = Amps.of(120);
+    ROLLER_CONFIG.statorCurrentLimit = Amps.of(60);
     ROLLER_CONFIG.enableStatorCurrentLimit = true;
+    ROLLER_CONFIG.supplyCurrentLimit = Amps.of(40);
+    ROLLER_CONFIG.enableSupplyCurrentLimit = true;
   }
 }
