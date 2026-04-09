@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.team2052.lib.helpers.MathHelpers;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,6 +33,7 @@ public class RollerSubsystem extends SubsystemBase {
   protected AngularVelocity goalVelocity;
 
   private final StatusSignal<AngularVelocity> velocitySignal;
+  private final StatusSignal<Current> torqueCurrentSignal;
   private final BaseStatusSignal[] signals;
 
   public RollerSubsystem(RollerSubsystemConstants constants) {
@@ -114,8 +116,9 @@ public class RollerSubsystem extends SubsystemBase {
     leader.optimizeBusUtilization();
 
     velocitySignal = leader.getVelocity();
-    signals = new BaseStatusSignal[] {velocitySignal};
-    BaseStatusSignal.setUpdateFrequencyForAll(20.0, signals);
+    torqueCurrentSignal = leader.getTorqueCurrent();
+    signals = new BaseStatusSignal[] {velocitySignal, torqueCurrentSignal};
+    BaseStatusSignal.setUpdateFrequencyForAll(200.0, signals);
   }
 
   /**

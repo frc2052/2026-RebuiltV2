@@ -29,19 +29,15 @@ public class RobotContainer {
   private void configureBindings() {
     translationJoystick
         .button(1)
-        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(40)));
+        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(43.5)));
 
-    rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(55)));
+    rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(80)));
     rotationJoystick
         .button(2)
-        .whileTrue(
-            Commands.parallel(
-                floor.runAtPctCommand(0.75)));
-    rotationJoystick
-        .button(4)
-        .whileTrue(
-            Commands.parallel(
-                feeder.runAtVelocityCommand(RotationsPerSecond.of(55))));
+        .whileTrue(Commands.parallel(floor.runAtVelocityCommand(RotationsPerSecond.of(113))));
+    translationJoystick
+        .button(2)
+        .whileTrue(Commands.parallel(feeder.runAtVelocityCommand(RotationsPerSecond.of(85))));
 
     rotationJoystick
         .button(3)

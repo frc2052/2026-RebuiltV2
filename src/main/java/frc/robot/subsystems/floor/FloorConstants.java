@@ -35,7 +35,7 @@ public final class FloorConstants {
 
     ROLLER_CONFIG.followerRateHz = 1000;
 
-    ROLLER_CONFIG.maxAngularVelocity = RotationsPerSecond.of(96);
+    ROLLER_CONFIG.maxAngularVelocity = RotationsPerSecond.of(120);
     ROLLER_CONFIG.counterClockwisePositive = false;
     ROLLER_CONFIG.neutralMode = NeutralModeValue.Coast;
     ROLLER_CONFIG.slot0kDeadband = 0.05;
