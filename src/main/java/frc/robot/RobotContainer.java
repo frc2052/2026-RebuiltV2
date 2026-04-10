@@ -29,7 +29,7 @@ public class RobotContainer {
   private void configureBindings() {
     translationJoystick
         .button(1)
-        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(43.5)));
+        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(40)));
 
     rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(80)));
     rotationJoystick

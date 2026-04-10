@@ -34,11 +34,11 @@ public final class ShooterConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 1; // 9
+    ROLLER_CONFIG.slot0kP = 1.5; // 9
     ROLLER_CONFIG.slot0kI = 0.0;
     ROLLER_CONFIG.slot0kD = 0.0; // 0.12
-    ROLLER_CONFIG.slot0kS = 5;
-    ROLLER_CONFIG.slot0kV = 0.0;
+    ROLLER_CONFIG.slot0kS = 4.1;
+    ROLLER_CONFIG.slot0kV = 0.16;
     ROLLER_CONFIG.slot0kA = 0.0;
 
     ROLLER_CONFIG.followerRateHz = 1000;
