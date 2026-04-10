@@ -31,4 +31,6 @@ public class Ports {
 
   public static final Pair<Integer, CANBus> INTAKE_ENCODER = Pair.of(13, MAIN_BUS);
   public static final Pair<Integer, CANBus> INTAKE_PIVOT_MOTOR = Pair.of(14, MAIN_BUS);
+
+  public static final Pair<Integer, CANBus> HOPPER_EXTENDER_MOTOR = Pair.of(15, MAIN_BUS);
 }
