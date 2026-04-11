@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import com.team2052.lib.logging.Logger;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.FieldConstants;
 
@@ -16,6 +19,7 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     // Force load this when the robot starts so that it doesn't cause 3 second overruns.
     double initialize = FieldConstants.fieldWidth;
+    Logger.start();
   }
 
   @Override
@@ -60,4 +64,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {
+    Logger.log("robot/pose", new Pose2d());
+    Logger.log("test", Timer.getFPGATimestamp());
+  }
 }

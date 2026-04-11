@@ -100,5 +100,7 @@ public final class IntakeConstants {
 
     INTAKE_SERVO_CONSTANTS.maxOutput = Volts.of(12.0);
     INTAKE_SERVO_CONSTANTS.neutralMode = NeutralModeValue.Brake;
+
+    INTAKE_ENCODER_CONSTANTS.id = Ports.INTAKE_PIVOT_ENCODER;
   }
 }

@@ -33,4 +33,6 @@ public class Ports {
   public static final Pair<Integer, CANBus> INTAKE_PIVOT_MOTOR = Pair.of(14, MAIN_BUS);
 
   public static final Pair<Integer, CANBus> HOPPER_EXTENDER_MOTOR = Pair.of(15, MAIN_BUS);
+
+  public static final Pair<Integer, CANBus> INTAKE_PIVOT_ENCODER = Pair.of(16, MAIN_BUS);
 }
