@@ -26,7 +26,7 @@ public final class FloorConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 1;
+    ROLLER_CONFIG.slot0kP = 10;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;

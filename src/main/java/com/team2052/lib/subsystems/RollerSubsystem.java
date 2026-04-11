@@ -6,6 +6,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -163,6 +164,10 @@ public class RollerSubsystem extends SubsystemBase {
 
   public void setOpenLoop(Voltage volts) {
     leader.setControl(voltage.withOutput(volts));
+  }
+
+  public void setOpenLoop(double output) {
+    leader.setControl(new DutyCycleOut(output));
   }
 
   /** Stop the roller motors by setting the goal velocity to 0. */

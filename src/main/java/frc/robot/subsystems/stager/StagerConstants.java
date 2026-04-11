@@ -18,7 +18,7 @@ public class StagerConstants {
             .withId(Ports.STAGER_TOP_MOTOR.getFirst())
             .withBus(Ports.STAGER_TOP_MOTOR.getSecond());
 
-    ROLLER_CONFIG.slot0kP = 2;
+    ROLLER_CONFIG.slot0kP = 10;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;

@@ -20,7 +20,7 @@ public class FeederConstants {
             .withBus(Ports.STAGER_BOTTOM_MOTOR.getSecond())
             .withInvertMotorOutput(MotorAlignmentValue.Aligned);
 
-    ROLLER_CONFIG.slot0kP = 1.6;
+    ROLLER_CONFIG.slot0kP = 15;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;
