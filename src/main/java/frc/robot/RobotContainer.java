@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.team2052.lib.input.T16000MJoystick;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
+import frc.robot.subsystems.feeder.FeederSubsystem;
 import frc.robot.subsystems.floor.FloorSubsystem;
 import frc.robot.subsystems.hopper.ExtendingHopperSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem;
@@ -20,6 +21,7 @@ public class RobotContainer {
   public final FloorSubsystem floor = FloorSubsystem.getInstance();
   public final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
   public final VisionSubsystem vision = VisionSubsystem.getInstance();
+  public final FeederSubsystem feeder = FeederSubsystem.getInstance();
   public final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
   public final StagerSubsystem stager = StagerSubsystem.getInstance();
   public final ExtendingHopperSubsystem hopper = ExtendingHopperSubsystem.getInstance();
@@ -36,14 +38,30 @@ public class RobotContainer {
   private void configureBindings() {
     translationJoystick
         .button(1)
-        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(40)));
-    rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(55)));
-    rotationJoystick.button(2).whileTrue(floor.runAtPctCommand(0.75));
+        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(35)));
+
+    // rotationJoystick.button(1).whileTrue(stager.runAtVelocityCommand(RotationsPerSecond.of(80)));
+    rotationJoystick
+        .button(2)
+        .whileTrue(
+            Commands.sequence(
+                // Commands.parallel(
+                //         floor.runAtVelocityCommand(RotationsPerSecond.of(-60)),
+                //         stager.runAtVelocityCommand(RotationsPerSecond.of(60)))
+                //     .withTimeout(Seconds.of(0.5)),
+                Commands.parallel(
+                    floor.runAtVelocityCommand(RotationsPerSecond.of(60)),
+                    stager.runAtVelocityCommand(RotationsPerSecond.of(55)))));
+    translationJoystick
+        .button(2)
+        .whileTrue(Commands.parallel(feeder.runAtVelocityCommand(RotationsPerSecond.of(96))));
+
     rotationJoystick
         .button(3)
         .whileTrue(
             Commands.parallel(
                 stager.runAtVelocityCommand(RotationsPerSecond.of(-55)),
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(-55)),
                 floor.runAtPctCommand(-0.75)));
   }
 }

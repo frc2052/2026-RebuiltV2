@@ -3,7 +3,6 @@ package frc.robot.subsystems.stager;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team2052.lib.subsystems.RollerSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants.TalonFXConstants;
@@ -18,15 +17,8 @@ public class StagerConstants {
         new TalonFXConstants()
             .withId(Ports.STAGER_TOP_MOTOR.getFirst())
             .withBus(Ports.STAGER_TOP_MOTOR.getSecond());
-    ROLLER_CONFIG.followerTalonFXConstants =
-        new TalonFXConstants[] {
-          new TalonFXConstants()
-              .withId(Ports.STAGER_BOTTOM_MOTOR.getFirst())
-              .withBus(Ports.STAGER_BOTTOM_MOTOR.getSecond())
-              .withInvertMotorOutput(MotorAlignmentValue.Aligned)
-        };
 
-    ROLLER_CONFIG.slot0kP = 1.6;
+    ROLLER_CONFIG.slot0kP = 10;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;

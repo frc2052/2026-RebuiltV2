@@ -1,4 +1,4 @@
-package frc.robot.subsystems.floor;
+package frc.robot.subsystems.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -9,24 +9,18 @@ import com.team2052.lib.subsystems.RollerSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants.TalonFXConstants;
 import frc.robot.util.Ports;
 
-public final class FloorConstants {
+public class FeederConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
 
   static {
-    ROLLER_CONFIG.name = "Floor";
+    ROLLER_CONFIG.name = "Feeder";
     ROLLER_CONFIG.leaderTalonFXConstants =
         new TalonFXConstants()
-            .withId(Ports.FLOOR_LEFT_MOTOR.getFirst())
-            .withBus(Ports.FLOOR_LEFT_MOTOR.getSecond());
-    ROLLER_CONFIG.followerTalonFXConstants =
-        new TalonFXConstants[] {
-          new TalonFXConstants()
-              .withId(Ports.FLOOR_RIGHT_MOTOR.getFirst())
-              .withBus(Ports.FLOOR_RIGHT_MOTOR.getSecond())
-              .withInvertMotorOutput(MotorAlignmentValue.Opposed)
-        };
+            .withId(Ports.STAGER_BOTTOM_MOTOR.getFirst())
+            .withBus(Ports.STAGER_BOTTOM_MOTOR.getSecond())
+            .withInvertMotorOutput(MotorAlignmentValue.Aligned);
 
-    ROLLER_CONFIG.slot0kP = 10;
+    ROLLER_CONFIG.slot0kP = 15;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;
@@ -35,8 +29,8 @@ public final class FloorConstants {
 
     ROLLER_CONFIG.followerRateHz = 1000;
 
-    ROLLER_CONFIG.maxAngularVelocity = RotationsPerSecond.of(120);
-    ROLLER_CONFIG.counterClockwisePositive = false;
+    ROLLER_CONFIG.maxAngularVelocity = RotationsPerSecond.of(96);
+    ROLLER_CONFIG.counterClockwisePositive = true;
     ROLLER_CONFIG.neutralMode = NeutralModeValue.Coast;
     ROLLER_CONFIG.slot0kDeadband = 0.05;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
