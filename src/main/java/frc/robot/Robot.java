@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
@@ -20,6 +21,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    // Reset the shot profile calculation flag at the start of each period
+    Superstructure.getInstance().setHasCalculatedShotProfileThisPeriod(false);
     CommandScheduler.getInstance().run();
   }
 
