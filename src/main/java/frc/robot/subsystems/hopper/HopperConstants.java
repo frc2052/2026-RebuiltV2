@@ -23,6 +23,8 @@ public final class HopperConstants {
 
     public static final double OPEN_LOOP_FALLING_SPEED = -0.2;
 
+    public static final Angle DISTANCE_TO_BOTTOM_THRESHOLD = Rotation.of(0);
+
     static {
         SERVO_CONSTANTS.name = "Hopper Extender";
         

@@ -10,10 +10,12 @@ import com.team2052.lib.util.DelayedBoolean;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ExtendingHopperSubsystem extends ServoSubsystem {
 
-    private HopperState currentState = HopperState.RETRACTED;
+    @Getter @Setter private HopperState currentState = HopperState.RETRACTED;
     private HopperState lastState = currentState;
 
     private boolean homing = false;
@@ -102,6 +104,10 @@ public class ExtendingHopperSubsystem extends ServoSubsystem {
     HOMING(null);
 
     private final Angle targetPosition;
+
+    public Angle getTargetPosition() {
+      return targetPosition;
+    }
 
     private HopperState(Angle targetAngle) {
       this.targetPosition = targetAngle;
