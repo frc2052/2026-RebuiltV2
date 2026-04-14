@@ -7,7 +7,6 @@ import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.subsystems.ServoSubsystem;
 import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.util.DelayedBoolean;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import lombok.Getter;
@@ -15,14 +14,14 @@ import lombok.Setter;
 
 public class ExtendingHopperSubsystem extends ServoSubsystem {
 
-    @Getter @Setter private HopperState currentState = HopperState.RETRACTED;
-    private HopperState lastState = currentState;
+  @Getter @Setter private HopperState currentState = HopperState.RETRACTED;
+  private HopperState lastState = currentState;
 
-    private boolean homing = false;
-    private boolean initializeHoming = false;
-    private final DelayedBoolean velocityHomingDelay =
+  private boolean homing = false;
+  private boolean initializeHoming = false;
+  private final DelayedBoolean velocityHomingDelay =
       new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
-    private final DelayedBoolean currentHomingDelay =
+  private final DelayedBoolean currentHomingDelay =
       new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
 
   private static ExtendingHopperSubsystem INSTANCE;
@@ -56,13 +55,11 @@ public class ExtendingHopperSubsystem extends ServoSubsystem {
       lastState = currentState;
     }
 
-    if (
-        currentState.equals(HopperState.FALLING) 
+    if (currentState.equals(HopperState.FALLING)
         && MathHelpers.epsilonEquals(
-            leader.getPosition().getValue().in(Rotations), 
-            HopperConstants.MIN_HOPPER_POSITION.in(Rotations), 
-            0.5)
-        ) {
+            leader.getPosition().getValue().in(Rotations),
+            HopperConstants.MIN_HOPPER_POSITION.in(Rotations),
+            0.5)) {
       setOpenLoop(0);
       currentState = HopperState.RETRACTED;
     }
@@ -113,5 +110,4 @@ public class ExtendingHopperSubsystem extends ServoSubsystem {
       this.targetPosition = targetAngle;
     }
   }
-    
 }

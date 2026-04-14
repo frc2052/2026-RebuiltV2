@@ -3,7 +3,6 @@ package frc.robot.subsystems.superstructure;
 import static edu.wpi.first.units.Units.*;
 
 import com.team2052.lib.regions.Region;
-
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,170 +29,250 @@ import lombok.Setter;
 
 public class Superstructure extends SubsystemBase {
 
-    private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-    private HoodSubsystem hood = HoodSubsystem.getInstance();
-    
-    @Getter @Setter private SuperstructureState currentState = SuperstructureState.NONE;
-    @Getter private FieldRegion currentFieldRegion = FieldRegion.ALLIANCE_ZONE;
+  private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
+  private HoodSubsystem hood = HoodSubsystem.getInstance();
 
-    @Getter private ShotProfile lastCalculatedProfile;
+  @Getter @Setter private SuperstructureState currentState = SuperstructureState.NONE;
+  @Getter private FieldRegion currentFieldRegion = FieldRegion.ALLIANCE_ZONE;
 
-    @Getter @Setter private Pair<AngularVelocity, Angle> manualShootingParameters = new Pair<>(RotationsPerSecond.of(0), Degrees.of(0));
+  @Getter private ShotProfile lastCalculatedProfile;
 
-    @Getter @Setter private boolean hasCalculatedShotProfileThisPeriod = false;
+  @Getter @Setter
+  private Pair<AngularVelocity, Angle> manualShootingParameters =
+      new Pair<>(RotationsPerSecond.of(0), Degrees.of(0));
 
-    @Getter @Setter private boolean isShootOnTheMove = SuperstructureConstants.DEFAULT_IS_SOTM;
+  @Getter @Setter private boolean hasCalculatedShotProfileThisPeriod = false;
 
-    private static Superstructure INSTANCE;
+  @Getter @Setter private boolean isShootOnTheMove = SuperstructureConstants.DEFAULT_IS_SOTM;
 
-    public static Superstructure getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Superstructure();
-        }
-        return INSTANCE;
+  private static Superstructure INSTANCE;
+
+  /**
+   * Get the singleton instance of the Superstructure subsystem.
+   *
+   * @return the singleton instance of the Superstructure subsystem.
+   */
+  public static Superstructure getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new Superstructure();
+    }
+    return INSTANCE;
+  }
+
+  private Superstructure() {}
+
+  /** Pushes the current state and shooting parameters to the hood and shooter subsystems. */
+  public void pushToSubsystems() {
+    switch (currentState) {
+      case NONE:
+        hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
+        shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
+        break;
+      case SHOOTING:
+        hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
+        shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        break;
+      case MANUAL:
+        hood.setToAngle(manualShootingParameters.getSecond());
+        shooter.setGoalVelocity(manualShootingParameters.getFirst());
+        break;
+      case TRENCH:
+        hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
+        shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
+        break;
+      default:
+        // do nothing
+        break;
+    }
+  }
+
+  /**
+   * Set the manual shooting parameters for the shooter and hood.
+   *
+   * @param shooterVelocity the velocity to set the shooter to when in manual shooting mode.
+   * @param hoodAngle the angle to set the hood to when in manual shooting mode.
+   */
+  public void setManualShootingParameters(AngularVelocity shooterVelocity, Angle hoodAngle) {
+    manualShootingParameters = new Pair<>(shooterVelocity, hoodAngle);
+  }
+
+  /**
+   * Set the manual shooting parameters for the shooter and hood based on a distance to target using
+   * the hub shooting table.
+   *
+   * @param distanceToTarget the distance to the target to get the shooting parameters for.
+   */
+  public void setManualShootingParametersForHub(Distance distanceToTarget) {
+    Pair<AngularVelocity, Angle> parameters =
+        HubShootingTable.getInstance().getShootingParameters(distanceToTarget);
+    setManualShootingParameters(parameters.getFirst(), parameters.getSecond());
+  }
+
+  @Override
+  public void periodic() {
+    determineFieldRegion();
+    calculateShotProfile();
+  }
+
+  /**
+   * Calculate the shot profile for the current period.
+   *
+   * @param targetType the target type to calculate the shot profile for.
+   */
+  public void calculateShotProfile(TargetType targetType) {
+    if (hasCalculatedShotProfileThisPeriod) {
+      return; // Prevent recalculating multiple times in the same period
     }
 
-    private Superstructure() {}
+    lastCalculatedProfile =
+        ShootingCalculator.calculateShotProfile(hasCalculatedShotProfileThisPeriod, targetType);
+    hasCalculatedShotProfileThisPeriod = true;
+  }
 
-    public void pushToSubsystems() {
-        switch (currentState) {
-            case NONE:
-                hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
-                shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
-                break;
-            case SHOOTING:
-                hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
-                shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
-                break;
-            case MANUAL:
-                hood.setToAngle(manualShootingParameters.getSecond());
-                shooter.setGoalVelocity(manualShootingParameters.getFirst());
-                break;
-            case TRENCH:
-                hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
-                shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
-                break;
-            default:
-                // do nothing
-                break;
-        }
+  /**
+   * Calculate the shot profile for the current period. Uses the current field region to determine
+   * which target use used.
+   */
+  public void calculateShotProfile() {
+    calculateShotProfile(currentFieldRegion.getAssociatedTargetType());
+  }
+
+  /**
+   * Call this method to force a recalculation of the shot profile for the current period, even if
+   * it has already been calculated once.
+   *
+   * @param targetType the target type to recalculate the shot profile for.
+   */
+  public void recalculateShotProfile(TargetType targetType) {
+    hasCalculatedShotProfileThisPeriod = false;
+    calculateShotProfile(targetType);
+  }
+
+  /**
+   * Call this method to force a recalculation of the shot profile for the current period, even if
+   * it has already been calculated once.
+   */
+  public void recalculateShotProfile() {
+    hasCalculatedShotProfileThisPeriod = false;
+    calculateShotProfile();
+  }
+
+  private void determineFieldRegion() {
+    Region allianceZone;
+    Region depotSide;
+    Region outpostSide;
+
+    if (MatchState.isRedAlliance()) {
+      allianceZone = FieldConstants.FieldRegions.RED_ALLIANCE_ZONE;
+      depotSide = FieldConstants.FieldRegions.RED_DEPOT_SIDE;
+      outpostSide = FieldConstants.FieldRegions.RED_OUTPOST_SIDE;
+    } else {
+      allianceZone = FieldConstants.FieldRegions.BLUE_ALLIANCE_ZONE;
+      depotSide = FieldConstants.FieldRegions.BLUE_DEPOT_SIDE;
+      outpostSide = FieldConstants.FieldRegions.BLUE_OUTPOST_SIDE;
     }
 
-    public void setManualShootingParameters(AngularVelocity shooterVelocity, Angle hoodAngle) {
-        manualShootingParameters = new Pair<>(shooterVelocity, hoodAngle);
+    Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
+
+    if (allianceZone.isPointInRegion(robotPose.getTranslation())) {
+      currentFieldRegion = FieldRegion.ALLIANCE_ZONE;
+    } else if (depotSide.isPointInRegion(robotPose.getTranslation())) {
+      currentFieldRegion = FieldRegion.DEPOT_SIDE;
+    } else if (outpostSide.isPointInRegion(robotPose.getTranslation())) {
+      currentFieldRegion = FieldRegion.OUTPOST_SIDE;
+    } else {
+      currentFieldRegion = FieldRegion.NONE; // Not in any defined region
+    }
+  }
+
+  public enum TargetType {
+    /** The target type for the hub. */
+    HUB(
+        FieldConstants.FieldLocations.RED_ALLIANCE_HUB_LOCATION,
+        FieldConstants.FieldLocations.BLUE_ALLIANCE_HUB_LOCATION,
+        HubShootingTable.getInstance(),
+        HubTimeTable.getInstance(),
+        false),
+    /**
+     * The target type for feeding on the depot side of the field, flips halves depending on
+     * alliance.
+     */
+    DEPOT_FEEDING(
+        FieldConstants.FieldLocations.RED_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT,
+        FieldConstants.FieldLocations.BLUE_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT,
+        FeedingShootingTable.getInstance(),
+        FeedingTimeTable.getInstance(),
+        true),
+    /**
+     * The target type for feeding on the outpost side of the field, flips halves depending on
+     * alliance.
+     */
+    OUTPOST_FEEDING(
+        FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT,
+        FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT,
+        FeedingShootingTable.getInstance(),
+        FeedingTimeTable.getInstance(),
+        true);
+
+    @Getter private final Translation2d redTargetLocation;
+    @Getter private final Translation2d blueTargetLocation;
+    @Getter private final ShootingTableBase shootingTable;
+    @Getter private final TimeTableBase timeTable;
+    @Getter private final boolean isFeeding;
+
+    /** Get the target location for the current alliance. */
+    public Translation2d getTargetLocation() {
+      return MatchState.isRedAlliance() ? redTargetLocation : blueTargetLocation;
     }
 
-    public void setManualShootingParametersForHub(Distance distanceToTarget) {
-        Pair<AngularVelocity, Angle> parameters = HubShootingTable.getInstance().getShootingParameters(distanceToTarget);
-        setManualShootingParameters(parameters.getFirst(), parameters.getSecond());
+    public TargetParameters toTargetParameters() {
+      return new TargetParameters(getTargetLocation(), this);
     }
 
-    @Override
-    public void periodic() {
-        determineFieldRegion();
-        calculateShotProfile();
+    private TargetType(
+        Translation2d redTargetLocation,
+        Translation2d blueTargetLocation,
+        ShootingTableBase shootingTable,
+        TimeTableBase timeTable,
+        boolean isFeeding) {
+      this.redTargetLocation = redTargetLocation;
+      this.blueTargetLocation = blueTargetLocation;
+      this.shootingTable = shootingTable;
+      this.timeTable = timeTable;
+      this.isFeeding = isFeeding;
     }
+  }
 
-    public void calculateShotProfile(TargetType targetType) {
-        if (hasCalculatedShotProfileThisPeriod) {
-            return; // Prevent recalculating multiple times in the same period
-        }
+  public enum SuperstructureState {
+    TRENCH,
+    MANUAL,
+    SHOOTING,
+    NONE;
+  }
 
-        lastCalculatedProfile = ShootingCalculator.calculateShotProfile(hasCalculatedShotProfileThisPeriod, targetType);
-        hasCalculatedShotProfileThisPeriod = true;
+  public enum FieldRegion {
+    ALLIANCE_ZONE(
+        FieldConstants.FieldRegions.RED_ALLIANCE_ZONE,
+        FieldConstants.FieldRegions.BLUE_ALLIANCE_ZONE,
+        TargetType.HUB),
+    DEPOT_SIDE(
+        FieldConstants.FieldRegions.RED_DEPOT_SIDE,
+        FieldConstants.FieldRegions.BLUE_DEPOT_SIDE,
+        TargetType.DEPOT_FEEDING),
+    OUTPOST_SIDE(
+        FieldConstants.FieldRegions.RED_OUTPOST_SIDE,
+        FieldConstants.FieldRegions.BLUE_OUTPOST_SIDE,
+        TargetType.OUTPOST_FEEDING),
+    NONE(null, null, null);
+
+    @Getter private final Region redRegion;
+    @Getter private final Region blueRegion;
+    @Getter private final TargetType associatedTargetType;
+
+    private FieldRegion(Region redRegion, Region blueRegion, TargetType associatedTargetType) {
+      this.redRegion = redRegion;
+      this.blueRegion = blueRegion;
+      this.associatedTargetType = associatedTargetType;
     }
-
-    public void calculateShotProfile() {
-        calculateShotProfile(currentFieldRegion.getAssociatedTargetType());
-    }
-
-    public void recalculateShotProfile(TargetType targetType) {
-        hasCalculatedShotProfileThisPeriod = false;
-        calculateShotProfile(targetType);
-    }
-
-    public void recalculateShotProfile() {
-        hasCalculatedShotProfileThisPeriod = false;
-        calculateShotProfile();
-    }
-
-    private void determineFieldRegion() {
-        Region allianceZone;
-        Region depotSide;
-        Region outpostSide;
-
-        if (MatchState.isRedAlliance()) {
-            allianceZone = FieldConstants.FieldRegions.RED_ALLIANCE_ZONE;
-            depotSide = FieldConstants.FieldRegions.RED_DEPOT_SIDE;
-            outpostSide = FieldConstants.FieldRegions.RED_OUTPOST_SIDE;
-        } else {
-            allianceZone = FieldConstants.FieldRegions.BLUE_ALLIANCE_ZONE;
-            depotSide = FieldConstants.FieldRegions.BLUE_DEPOT_SIDE;
-            outpostSide = FieldConstants.FieldRegions.BLUE_OUTPOST_SIDE;
-        }
-
-        Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
-
-        if (allianceZone.isPointInRegion(robotPose.getTranslation())) {
-            currentFieldRegion = FieldRegion.ALLIANCE_ZONE;
-        } else if (depotSide.isPointInRegion(robotPose.getTranslation())) {
-            currentFieldRegion = FieldRegion.DEPOT_SIDE;
-        } else if (outpostSide.isPointInRegion(robotPose.getTranslation())) {
-            currentFieldRegion = FieldRegion.OUTPOST_SIDE;
-        } else {
-            currentFieldRegion = FieldRegion.NONE; // Not in any defined region
-        }
-    }
-
-    public enum TargetType {
-        HUB(FieldConstants.FieldLocations.RED_ALLIANCE_HUB_LOCATION, FieldConstants.FieldLocations.BLUE_ALLIANCE_HUB_LOCATION, HubShootingTable.getInstance(), HubTimeTable.getInstance(), false),
-        DEPOT_FEEDING(FieldConstants.FieldLocations.RED_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT, FieldConstants.FieldLocations.BLUE_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT, FeedingShootingTable.getInstance(), FeedingTimeTable.getInstance(), true),
-        OUTPOST_FEEDING(FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT, FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT, FeedingShootingTable.getInstance(), FeedingTimeTable.getInstance(), true);
-
-        @Getter private final Translation2d redTargetLocation;
-        @Getter private final Translation2d blueTargetLocation;
-        @Getter private final ShootingTableBase shootingTable;
-        @Getter private final TimeTableBase timeTable;
-        @Getter private final boolean isFeeding;
-
-        public Translation2d getTargetLocation() {
-            return MatchState.isRedAlliance() ? redTargetLocation : blueTargetLocation;
-        }
-
-        public TargetParameters toTargetParameters() {
-            return new TargetParameters(getTargetLocation(), this);
-        }
-
-        private TargetType(Translation2d redTargetLocation, Translation2d blueTargetLocation, ShootingTableBase shootingTable, TimeTableBase timeTable, boolean isFeeding) {
-            this.redTargetLocation = redTargetLocation;
-            this.blueTargetLocation = blueTargetLocation;
-            this.shootingTable = shootingTable;
-            this.timeTable = timeTable;
-            this.isFeeding = isFeeding;
-        }
-    }
-
-    public enum SuperstructureState {
-        TRENCH,
-        MANUAL,
-        SHOOTING,
-        NONE;
-    }
-
-    public enum FieldRegion {
-        ALLIANCE_ZONE(FieldConstants.FieldRegions.RED_ALLIANCE_ZONE, FieldConstants.FieldRegions.BLUE_ALLIANCE_ZONE, TargetType.HUB),
-        DEPOT_SIDE(FieldConstants.FieldRegions.RED_DEPOT_SIDE, FieldConstants.FieldRegions.BLUE_DEPOT_SIDE, TargetType.DEPOT_FEEDING),
-        OUTPOST_SIDE(FieldConstants.FieldRegions.RED_OUTPOST_SIDE, FieldConstants.FieldRegions.BLUE_OUTPOST_SIDE, TargetType.OUTPOST_FEEDING),
-        NONE(null, null, null);
-
-        @Getter private final Region redRegion;
-        @Getter private final Region blueRegion;
-        @Getter private final TargetType associatedTargetType;
-
-        private FieldRegion(Region redRegion, Region blueRegion, TargetType associatedTargetType) {
-            this.redRegion = redRegion;
-            this.blueRegion = blueRegion;
-            this.associatedTargetType = associatedTargetType;
-        }
-    }
+  }
 }

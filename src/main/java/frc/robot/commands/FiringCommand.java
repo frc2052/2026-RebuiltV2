@@ -6,19 +6,18 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.floor.FloorSubsystem;
 import frc.robot.subsystems.hopper.ExtendingHopperSubsystem;
-import frc.robot.subsystems.hopper.HopperConstants;
 import frc.robot.subsystems.hopper.ExtendingHopperSubsystem.HopperState;
+import frc.robot.subsystems.hopper.HopperConstants;
 import frc.robot.subsystems.stager.StagerSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class FiringCommand extends Command {
-  
+
   private FloorSubsystem floor = FloorSubsystem.getInstance();
   private StagerSubsystem stager = StagerSubsystem.getInstance();
   private ExtendingHopperSubsystem hopper = ExtendingHopperSubsystem.getInstance();
@@ -53,7 +52,8 @@ public class FiringCommand extends Command {
     timer.stop();
     timer.reset();
 
-    double distanceToBottom = hopper.getPosition().minus(HopperState.RETRACTED.getTargetPosition()).abs(Degrees);
+    double distanceToBottom =
+        hopper.getPosition().minus(HopperState.RETRACTED.getTargetPosition()).abs(Degrees);
     if (distanceToBottom < HopperConstants.DISTANCE_TO_BOTTOM_THRESHOLD.in(Degrees)) {
       hopper.setCurrentState(HopperState.RETRACTED);
     } else {

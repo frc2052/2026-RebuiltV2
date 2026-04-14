@@ -7,17 +7,15 @@ import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.subsystems.CANCoderConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemWithCANCoder;
-
 import edu.wpi.first.units.measure.Angle;
 import lombok.Getter;
 
 public class HoodSubsystem extends ServoSubsystemWithCANCoder {
-  
 
   private static HoodSubsystem INSTANCE;
 
   @Getter private Angle goalAngle = Rotations.of(0);
-  private  Angle lastGoalAngle = goalAngle;
+  private Angle lastGoalAngle = goalAngle;
 
   public static HoodSubsystem getInstance() {
     if (INSTANCE == null) {
@@ -37,7 +35,8 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
   }
 
   public boolean isAtAngle(Angle angle, Angle tolerance) {
-    return MathHelpers.epsilonEquals(getPosition().in(Degrees), angle.in(Degrees), tolerance.in(Degrees));
+    return MathHelpers.epsilonEquals(
+        getPosition().in(Degrees), angle.in(Degrees), tolerance.in(Degrees));
   }
 
   private Angle boundAngle(Angle angle) {
@@ -48,12 +47,12 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
             HoodConstants.HOOD_MAX_ANGLE.in(Degrees)));
   }
 
-   @Override
-   public void periodic() {
-     super.periodic();
-     if (goalAngle.in(Degrees) != lastGoalAngle.in(Degrees)) {
-       setSetpointMotionMagic(goalAngle);
-       lastGoalAngle = goalAngle;
-     }
-   }
+  @Override
+  public void periodic() {
+    super.periodic();
+    if (goalAngle.in(Degrees) != lastGoalAngle.in(Degrees)) {
+      setSetpointMotionMagic(goalAngle);
+      lastGoalAngle = goalAngle;
+    }
+  }
 }
