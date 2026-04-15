@@ -23,7 +23,45 @@ public class VisionConstants {
   public static final double MAX_POSE_AMBIGUITY = 0.15;
   public static final Distance FIELD_BORDER_MARGIN = Meters.of(0.5);
 
-  public static class ChassisLimelightConstants {
+  public static class BackLimelightConstants {
+    public static final String CAMERA_NAME = "limelight-chassis";
+    public static final Distance X_OFFSET = Inches.of(-12.86588);
+    public static final Distance Y_OFFSET = Inches.of(4.5);
+    public static final Distance Z_OFFSET = Inches.of(12.527);
+    public static final Angle THETA_X_OFFSET = Degrees.of(0);
+    public static final Angle THETA_Y_OFFSET = Degrees.of(0);
+    public static final Angle THETA_Z_OFFSET = Degrees.of(180);
+    public static final double[] LIMELIGHT_POSE = {
+      X_OFFSET.in(Meters),
+      Y_OFFSET.in(Meters),
+      Z_OFFSET.in(Meters),
+      THETA_X_OFFSET.in(Degrees),
+      THETA_Y_OFFSET.in(Degrees),
+      THETA_Z_OFFSET.in(Degrees)
+    };
+    public static final int MODE = 0;
+  }
+
+  public static class LeftLimelightConstants {
+    public static final String CAMERA_NAME = "limelight-chassis";
+    public static final Distance X_OFFSET = Inches.of(-12.86588);
+    public static final Distance Y_OFFSET = Inches.of(4.5);
+    public static final Distance Z_OFFSET = Inches.of(12.527);
+    public static final Angle THETA_X_OFFSET = Degrees.of(0);
+    public static final Angle THETA_Y_OFFSET = Degrees.of(0);
+    public static final Angle THETA_Z_OFFSET = Degrees.of(180);
+    public static final double[] LIMELIGHT_POSE = {
+      X_OFFSET.in(Meters),
+      Y_OFFSET.in(Meters),
+      Z_OFFSET.in(Meters),
+      THETA_X_OFFSET.in(Degrees),
+      THETA_Y_OFFSET.in(Degrees),
+      THETA_Z_OFFSET.in(Degrees)
+    };
+    public static final int MODE = 0;
+  }
+
+  public static class RightLimelightConstants {
     public static final String CAMERA_NAME = "limelight-chassis";
     public static final Distance X_OFFSET = Inches.of(-12.86588);
     public static final Distance Y_OFFSET = Inches.of(4.5);

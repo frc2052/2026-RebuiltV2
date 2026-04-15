@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
-import frc.robot.subsystems.vision.VisionConstants.ChassisLimelightConstants;
+import frc.robot.subsystems.vision.VisionConstants.*;
 import frc.robot.util.FieldConstants;
 import java.util.Arrays;
 import java.util.Optional;
@@ -55,14 +55,23 @@ public class VisionSubsystem extends SubsystemBase {
     LimelightCamera.CHASSIS
         .getTable()
         .getEntry("camerapose_robotspace_set")
-        .setDoubleArray(ChassisLimelightConstants.LIMELIGHT_POSE);
+        .setDoubleArray(BackLimelightConstants.LIMELIGHT_POSE);
+    LimelightCamera.LEFT
+        .getTable()
+        .getEntry("camerapose_robotspace_set")
+        .setDoubleArray(LeftLimelightConstants.LIMELIGHT_POSE);
+    LimelightCamera.RIGHT
+        .getTable()
+        .getEntry("camerapose_robotspace_set")
+        .setDoubleArray(RightLimelightConstants.LIMELIGHT_POSE);
 
     // set double to 1 for enable, 0 to disable
     LimelightCamera.CHASSIS.getTable().getEntry("rewind_enable_set").setDouble(0);
+    LimelightCamera.LEFT.getTable().getEntry("rewind_enable_set").setDouble(0);
+    LimelightCamera.RIGHT.getTable().getEntry("rewind_enable_set").setDouble(0);
   }
 
-  @Override
-  public void periodic() {
+  public void visionPeriodic() {
     filter(readMT1(LimelightCamera.CHASSIS, previousChassisEstimate))
         .ifPresent(
             e -> {
@@ -73,7 +82,32 @@ public class VisionSubsystem extends SubsystemBase {
                       Utils.fpgaToCurrentTime(e.timestampSeconds),
                       calculateStandardDeviation(e));
             });
+
+    filter(readMT1(LimelightCamera.LEFT, previousChassisEstimate))
+        .ifPresent(
+            e -> {
+              RobotState.getInstance().setChassisVisionFieldPose(e.pose);
+              DrivetrainSubsystem.getInstance()
+                  .addVisionMeasurement(
+                      e.pose,
+                      Utils.fpgaToCurrentTime(e.timestampSeconds),
+                      calculateStandardDeviation(e));
+            });
+
+    filter(readMT1(LimelightCamera.RIGHT, previousChassisEstimate))
+        .ifPresent(
+            e -> {
+              RobotState.getInstance().setChassisVisionFieldPose(e.pose);
+              DrivetrainSubsystem.getInstance()
+                  .addVisionMeasurement(
+                      e.pose,
+                      Utils.fpgaToCurrentTime(e.timestampSeconds),
+                      calculateStandardDeviation(e));
+            });
+
     pushYaw(LimelightCamera.CHASSIS);
+    pushYaw(LimelightCamera.LEFT);
+    pushYaw(LimelightCamera.RIGHT);
 
     NetworkTableInstance.getDefault().flush();
   }
@@ -180,7 +214,9 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public enum LimelightCamera {
-    CHASSIS(ChassisLimelightConstants.CAMERA_NAME);
+    CHASSIS(BackLimelightConstants.CAMERA_NAME),
+    LEFT(LeftLimelightConstants.CAMERA_NAME),
+    RIGHT(RightLimelightConstants.CAMERA_NAME);
 
     private final String cameraName;
     private final NetworkTable table;

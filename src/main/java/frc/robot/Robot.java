@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
@@ -17,6 +18,7 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     // Force load this when the robot starts so that it doesn't cause 3 second overruns.
     double initialize = FieldConstants.fieldWidth;
+    addPeriodic(VisionSubsystem.getInstance()::visionPeriodic, Constants.VISION_LOOP_PERIOD, Constants.VISION_LOOP_OFFSET);
   }
 
   @Override
