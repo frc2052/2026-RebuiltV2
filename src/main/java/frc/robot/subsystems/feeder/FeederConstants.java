@@ -7,10 +7,13 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team2052.lib.subsystems.RollerSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants.TalonFXConstants;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.util.Ports;
 
 public class FeederConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
+
+  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(40);
 
   static {
     ROLLER_CONFIG.name = "Feeder";

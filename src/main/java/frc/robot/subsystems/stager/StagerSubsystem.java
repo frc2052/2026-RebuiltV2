@@ -1,6 +1,7 @@
 package frc.robot.subsystems.stager;
 
 import com.team2052.lib.subsystems.RollerSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class StagerSubsystem extends RollerSubsystem {
   private static StagerSubsystem INSTANCE;
@@ -14,6 +15,14 @@ public class StagerSubsystem extends RollerSubsystem {
 
   public StagerSubsystem() {
     super(StagerConstants.ROLLER_CONFIG);
+  }
+
+  public void runAtFiringVelocity() {
+    setGoalVelocity(StagerConstants.FIRING_VELOCITY);
+  }
+
+  public Command scoreCommand() {
+    return runAtVelocityCommand(StagerConstants.FIRING_VELOCITY);
   }
 
   @Override
