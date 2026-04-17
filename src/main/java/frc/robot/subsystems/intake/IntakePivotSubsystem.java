@@ -36,6 +36,10 @@ public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
     return new InstantCommand(() -> set(Degrees.of(degrees)));
   }
 
+  public Command setCommand(IntakePosition position) {
+    return new InstantCommand(() -> set(position));
+  }
+
   public void set(IntakePosition position) {
     set(position.angle);
   }

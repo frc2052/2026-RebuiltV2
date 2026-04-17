@@ -9,6 +9,8 @@ import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.util.DelayedBoolean;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,6 +38,10 @@ public class ExtendingHopperSubsystem extends ServoSubsystem {
   private ExtendingHopperSubsystem(ServoSubsystemConstants constants) {
     super(constants);
     zeroMotor();
+  }
+
+  public Command setStateCommand(HopperState state) {
+    return new InstantCommand(() -> currentState = state);
   }
 
   @Override

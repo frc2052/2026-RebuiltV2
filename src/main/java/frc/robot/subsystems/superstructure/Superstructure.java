@@ -7,6 +7,8 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.subsystems.hood.HoodConstants;
@@ -34,6 +36,8 @@ public class Superstructure extends SubsystemBase {
 
   @Getter @Setter private SuperstructureState currentState = SuperstructureState.NONE;
   @Getter private FieldRegion currentFieldRegion = FieldRegion.ALLIANCE_ZONE;
+
+  @Getter @Setter private TargetType overrideTarget = TargetType.HUB;
 
   @Getter private ShotProfile lastCalculatedProfile;
 
@@ -66,9 +70,13 @@ public class Superstructure extends SubsystemBase {
     switch (currentState) {
       case NONE:
         hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
-        shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
+        shooter.setGoalVelocity(RotationsPerSecond.of(0));
         break;
       case SHOOTING:
+        hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
+        shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        break;
+      case OVERRIDE_SHOOTING:
         hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
         shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
@@ -84,6 +92,20 @@ public class Superstructure extends SubsystemBase {
         // do nothing
         break;
     }
+  }
+
+  public Command setStateCommand(SuperstructureState newState) {
+    return new InstantCommand(() -> setCurrentState(newState));
+  }
+
+  public void overrideTarget(TargetType newTarget) {
+    overrideTarget = newTarget;
+    setCurrentState(SuperstructureState.OVERRIDE_SHOOTING);
+    recalculateShotProfile(newTarget);
+  }
+
+  public Command overrideTargetCommand(TargetType newTarget) {
+    return new InstantCommand(() -> overrideTarget(newTarget));
   }
 
   /**
@@ -111,7 +133,12 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     determineFieldRegion();
-    calculateShotProfile();
+
+    if (currentState == SuperstructureState.OVERRIDE_SHOOTING) {
+      calculateShotProfile(overrideTarget);
+    } else {
+      calculateShotProfile();
+    }
   }
 
   /**
@@ -247,6 +274,7 @@ public class Superstructure extends SubsystemBase {
     TRENCH,
     MANUAL,
     SHOOTING,
+    OVERRIDE_SHOOTING,
     NONE;
   }
 
