@@ -3,6 +3,7 @@ package com.team2052.lib.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.*;
@@ -18,6 +19,7 @@ public class ServoSubsystemConstants {
 
   public NeutralModeValue neutralMode = NeutralModeValue.Brake;
   public double homePosition = 0.0;
+  public FeedbackSensorSourceValue sensorMode = FeedbackSensorSourceValue.RotorSensor;
 
   /**
    * This is the ratio of sensor rotations to the mechanism's output. This is equivalent to the

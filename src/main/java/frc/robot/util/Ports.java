@@ -9,28 +9,28 @@ public class Ports {
    * A Pair holds both CAN ID and CAN Bus for devices
    * When creating a device, use .getFirst() for ID and .getSecond() for Bus
    */
-  public static final CANBus MAIN_BUS = new CANBus("ChickenDrummy");
+  public static final CANBus MAIN_BUS = new CANBus("NotDriveCAN");
   public static final CANBus RIO_BUS = CANBus.roboRIO();
 
-  public static final Pair<Integer, CANBus> FLOOR_LEFT_MOTOR = Pair.of(2, MAIN_BUS);
-  public static final Pair<Integer, CANBus> FLOOR_RIGHT_MOTOR = Pair.of(1, MAIN_BUS);
+  public static final Pair<Integer, CANBus> FLOOR_LEFT_MOTOR = Pair.of(34, MAIN_BUS);
+  public static final Pair<Integer, CANBus> FLOOR_RIGHT_MOTOR = Pair.of(33, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> SHOOTER_TOP_LEFT = Pair.of(5, MAIN_BUS);
-  public static final Pair<Integer, CANBus> SHOOTER_BOTTOM_LEFT = Pair.of(4, MAIN_BUS);
-  public static final Pair<Integer, CANBus> SHOOTER_TOP_RIGHT = Pair.of(6, MAIN_BUS);
-  public static final Pair<Integer, CANBus> SHOOTER_BOTTOM_RIGHT = Pair.of(7, MAIN_BUS);
+  public static final Pair<Integer, CANBus> SHOOTER_TOP_LEFT = Pair.of(25, MAIN_BUS);
+  public static final Pair<Integer, CANBus> SHOOTER_BOTTOM_LEFT = Pair.of(26, MAIN_BUS);
+  public static final Pair<Integer, CANBus> SHOOTER_TOP_RIGHT = Pair.of(23, MAIN_BUS);
+  public static final Pair<Integer, CANBus> SHOOTER_BOTTOM_RIGHT = Pair.of(22, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> STAGER_TOP_MOTOR = Pair.of(8, MAIN_BUS);
-  public static final Pair<Integer, CANBus> STAGER_BOTTOM_MOTOR = Pair.of(9, MAIN_BUS);
+  public static final Pair<Integer, CANBus> STAGER_TOP_MOTOR = Pair.of(21, MAIN_BUS);
+  public static final Pair<Integer, CANBus> STAGER_BOTTOM_MOTOR = Pair.of(20, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> HOOD_MOTOR = Pair.of(3, MAIN_BUS);
-  public static final Pair<Integer, CANBus> HOOD_ENCODER = Pair.of(10, MAIN_BUS);
+  public static final Pair<Integer, CANBus> HOOD_MOTOR = Pair.of(27, MAIN_BUS);
+  public static final Pair<Integer, CANBus> HOOD_ENCODER = Pair.of(24, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> LEFT_INTAKE_MOTOR = Pair.of(11, MAIN_BUS);
-  public static final Pair<Integer, CANBus> RIGHT_INTAKE_MOTOR = Pair.of(12, MAIN_BUS);
+  public static final Pair<Integer, CANBus> LEFT_INTAKE_MOTOR = Pair.of(30, MAIN_BUS);
+  public static final Pair<Integer, CANBus> RIGHT_INTAKE_MOTOR = Pair.of(31, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> INTAKE_ENCODER = Pair.of(13, MAIN_BUS);
-  public static final Pair<Integer, CANBus> INTAKE_PIVOT_MOTOR = Pair.of(14, MAIN_BUS);
+  public static final Pair<Integer, CANBus> INTAKE_ENCODER = Pair.of(32, MAIN_BUS);
+  public static final Pair<Integer, CANBus> INTAKE_PIVOT_MOTOR = Pair.of(29, MAIN_BUS);
 
-  public static final Pair<Integer, CANBus> HOPPER_EXTENDER_MOTOR = Pair.of(15, MAIN_BUS);
+  public static final Pair<Integer, CANBus> HOPPER_EXTENDER_MOTOR = Pair.of(28, MAIN_BUS);
 }

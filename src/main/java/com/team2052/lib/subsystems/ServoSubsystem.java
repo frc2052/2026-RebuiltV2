@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.units.measure.Angle;
@@ -41,7 +40,7 @@ public abstract class ServoSubsystem extends SubsystemBase {
     leaderConfig = new TalonFXConfiguration();
     followerConfigs = new TalonFXConfiguration[constants.followerTalonFXConstants.length];
 
-    leaderConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    leaderConfig.Feedback.FeedbackSensorSource = constants.sensorMode;
     leaderConfig.Feedback.SensorToMechanismRatio = constants.sensorToMechanismRatio;
     leaderConfig.Feedback.RotorToSensorRatio = constants.rotorToSensorRatio;
 
@@ -241,7 +240,7 @@ public abstract class ServoSubsystem extends SubsystemBase {
       leader.setControl(
           new MotionMagicExpoVoltage(demand / 360)
               .withSlot(constants.motionMagicSlot)
-              .withEnableFOC(true));
+              .withEnableFOC(false));
     } else if (mode == ControlMode.POSITION_PID) {
       leader.setControl(
           new PositionDutyCycle(demand / 360).withSlot(constants.positionSlot).withEnableFOC(true));

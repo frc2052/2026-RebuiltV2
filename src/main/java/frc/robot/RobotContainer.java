@@ -190,25 +190,6 @@ public class RobotContainer {
   }
 
   private void configureTestBindings() {
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: CALEB!!!!!!!!!!!!!
-    // TODO: READ THIS !!!!!!!!
     /*  How to run these tests WITHOUT having logger:
      * 1. make sure this method is called instead of configureMatchBindings() in the constructor
      * 2. setup the hood first cause otherwise it will try to go to the min angle and if thats not setup it will break.
@@ -257,8 +238,8 @@ public class RobotContainer {
     // halfway intake
     secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
 
-    // in intake
-    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.IN_POSITION));
+    // intake out
+    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
 
     // run intake rollers
     translationJoystick.frontTrigger().whileTrue(intake.runIntakeCommand());
@@ -269,17 +250,13 @@ public class RobotContainer {
     // MIN ANGLE!!!!
 
     // set hood to min angle
-    secondaryPanel
-        .button(1)
-        .onFalse(Commands.runOnce(() -> hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE)));
+    secondaryPanel.button(10).onFalse(hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
 
     // set hood to max angle
-    secondaryPanel
-        .button(2)
-        .onFalse(Commands.runOnce(() -> hood.setToAngle(HoodConstants.HOOD_MAX_ANGLE)));
+    secondaryPanel.button(1).onFalse(hood.setCommand((HoodConstants.HOOD_MAX_ANGLE)));
 
-    // set hood to 30 degrees
-    secondaryPanel.button(3).onFalse(Commands.runOnce(() -> hood.setToAngle(Degrees.of(30))));
+    // set hood to halfway degrees
+    secondaryPanel.button(6).onFalse(hood.setCommand(Degrees.of(22.5)));
 
     // SCORING THINGS
 
@@ -300,13 +277,13 @@ public class RobotContainer {
     // speeds.
 
     // side buttons
-    secondaryPanel
-        .button(2)
-        .onTrue(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.RETRACTED));
-    Trigger hopperRetract = new Trigger(() -> secondaryPanel.getX() < 0.5);
-    hopperRetract.onFalse(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.RETRACTED));
-    Trigger hopperFall = new Trigger(() -> secondaryPanel.getX() > 0.5);
-    hopperFall.onFalse(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.FALLING));
+    // secondaryPanel
+    //     .button(2)
+    //     .onTrue(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.RETRACTED));
+    // Trigger hopperRetract = new Trigger(() -> secondaryPanel.getX() < 0.5);
+    // hopperRetract.onFalse(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.RETRACTED));
+    // Trigger hopperFall = new Trigger(() -> secondaryPanel.getX() > 0.5);
+    // hopperFall.onFalse(hopper.setStateCommand(ExtendingHopperSubsystem.HopperState.FALLING));
 
     // ok so if you've gotten this far GREAT! I didn't think you'd be able to get everything working
     // without me ;)
@@ -314,18 +291,43 @@ public class RobotContainer {
     // those work but here is where I'ma setup the shot profile tuning stuff.
 
     // plus minus half a degree on the hood
-    secondaryPanel.button(4).onFalse(Commands.runOnce(() -> hood.setToAngle(hood.getGoalAngle().plus(Degrees.of(0.5)))));
-    secondaryPanel.button(6).onFalse(Commands.runOnce(() -> hood.setToAngle(hood.getGoalAngle().minus(Degrees.of(0.5)))));
+    // secondaryPanel
+    //     .button(4)
+    //     .onFalse(
+    //         Commands.runOnce(() -> hood.setToAngle(hood.getGoalAngle().plus(Degrees.of(0.5)))));
+    // secondaryPanel
+    //     .button(6)
+    //     .onFalse(
+    //         Commands.runOnce(() -> hood.setToAngle(hood.getGoalAngle().minus(Degrees.of(0.5)))));
 
-    // plus minus 1 RPS on the shooter
-    secondaryPanel.button(7).onFalse(Commands.runOnce(() -> shooter.setGoalVelocity(shooter.getGoalPoint().plus(RotationsPerSecond.of(1)))));
-    secondaryPanel.button(8).onFalse(Commands.runOnce(() -> shooter.setGoalVelocity(shooter.getGoalPoint().minus(RotationsPerSecond.of(1)))));
+    // // plus minus 1 RPS on the shooter
+    // secondaryPanel
+    //     .button(7)
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () ->
+    //                 shooter.setGoalVelocity(
+    //                     shooter.getGoalPoint().plus(RotationsPerSecond.of(1)))));
+    // secondaryPanel
+    //     .button(8)
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () ->
+    //                 shooter.setGoalVelocity(
+    //                     shooter.getGoalPoint().minus(RotationsPerSecond.of(1)))));
 
-    // print out the current shot profile
-    secondaryPanel.button(9).onFalse(Commands.runOnce(() -> {
-      System.out.println("Current hood angle: " + hood.getGoalAngle().in(Degrees) + " degrees");
-      System.out.println("Current shooter velocity: " + shooter.getGoalPoint().in(RotationsPerSecond) + " RPS");
-     }));
-
+    // // print out the current shot profile
+    // secondaryPanel
+    //     .button(9)
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               System.out.println(
+    //                   "Current hood angle: " + hood.getGoalAngle().in(Degrees) + " degrees");
+    //               System.out.println(
+    //                   "Current shooter velocity: "
+    //                       + shooter.getGoalPoint().in(RotationsPerSecond)
+    //                       + " RPS");
+    //             }));
   }
 }

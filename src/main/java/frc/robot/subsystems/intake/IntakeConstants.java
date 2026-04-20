@@ -2,8 +2,10 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.team2052.lib.subsystems.CANCoderConstants;
 import com.team2052.lib.subsystems.RollerSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants;
@@ -17,7 +19,7 @@ public final class IntakeConstants {
   // ----- INTAKE ROLLER -----
   public static final RollerSubsystemConstants INTAKE_ROLLER_CONSTANTS =
       new RollerSubsystemConstants();
-  public static final AngularVelocity INTAKE_VELOCITY = RotationsPerSecond.of(160);
+  public static final AngularVelocity INTAKE_VELOCITY = RotationsPerSecond.of(96);
 
   static {
     INTAKE_ROLLER_CONSTANTS.name = "Intake Roller";
@@ -33,16 +35,16 @@ public final class IntakeConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    INTAKE_ROLLER_CONSTANTS.slot0kP = 4;
+    INTAKE_ROLLER_CONSTANTS.slot0kP = 10;
     INTAKE_ROLLER_CONSTANTS.slot0kI = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kD = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kS = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kV = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kA = 0;
     INTAKE_ROLLER_CONSTANTS.maxAngularVelocity = RotationsPerSecond.of(0);
-    INTAKE_ROLLER_CONSTANTS.counterClockwisePositive = false;
+    INTAKE_ROLLER_CONSTANTS.counterClockwisePositive = true;
     INTAKE_ROLLER_CONSTANTS.neutralMode = NeutralModeValue.Coast;
-    INTAKE_ROLLER_CONSTANTS.sensorToMechanismRatio = 12.0 / 30;
+    INTAKE_ROLLER_CONSTANTS.sensorToMechanismRatio = 1; // (30.0 / 12);
     INTAKE_ROLLER_CONSTANTS.statorCurrentLimit = Amps.of(60);
     INTAKE_ROLLER_CONSTANTS.enableStatorCurrentLimit = true;
     INTAKE_ROLLER_CONSTANTS.supplyCurrentLimit = Amps.of(40);
@@ -51,18 +53,18 @@ public final class IntakeConstants {
 
   // ----- INTAKE SERVO -----
 
-  public static final Angle IN_POSITION = Rotations.of(0.12);
+  public static final Angle UP_POSITION = Rotations.of(0.584697);
   public static final Angle HALFWAY_POSITION = Degrees.of(32);
   public static final Angle STOW_POSITION = Degrees.of(52.5);
-  public static final Angle OUT_POSITION = Rotations.of(0);
+  public static final Angle DOWN_POSITION = Rotations.of(0);
   public static final Angle MIN_INTAKE_ARM_ANGLE = Rotations.of(0);
-  public static final Angle MAX_INTAKE_ARM_ANGLE = Rotations.of(0.177);
+  public static final Angle MAX_INTAKE_ARM_ANGLE = Rotations.of(0.590088);
 
   public static final ServoSubsystemConstants INTAKE_SERVO_CONSTANTS =
       new ServoSubsystemConstants();
   public static final CANCoderConstants INTAKE_ENCODER_CONSTANTS = new CANCoderConstants();
 
-  public static final Angle ENCODER_OFFSET = Rotations.of(0.336425);
+  public static final Angle ENCODER_OFFSET = Rotations.of(-0.0244140625);
 
   static {
     INTAKE_SERVO_CONSTANTS.name = "Intake Pivot";
@@ -72,11 +74,10 @@ public final class IntakeConstants {
             .withId(Ports.INTAKE_PIVOT_MOTOR.getFirst())
             .withBus(Ports.INTAKE_PIVOT_MOTOR.getSecond());
 
-    INTAKE_SERVO_CONSTANTS.counterClockwisePositive = true;
+    INTAKE_SERVO_CONSTANTS.counterClockwisePositive = false;
 
-    INTAKE_SERVO_CONSTANTS.sensorToMechanismRatio = 1;
-    // 1 because we use RemoteCANCoder instead of the rotor encoder
-    // (42.0 / 12.0) * (42.0 / 16.0) * (48.0 / 12.0);
+    INTAKE_SERVO_CONSTANTS.sensorToMechanismRatio = (48.0 / 14);
+    INTAKE_SERVO_CONSTANTS.rotorToSensorRatio = (48.0 / 12) * (48.0 / 16);
 
     INTAKE_SERVO_CONSTANTS.slot0kP = 80;
     INTAKE_SERVO_CONSTANTS.slot0kI = 0;
@@ -91,14 +92,23 @@ public final class IntakeConstants {
     INTAKE_SERVO_CONSTANTS.slot1kD = 0.0;
 
     INTAKE_SERVO_CONSTANTS.cruiseVelocity = 360; // degrees / second
-    INTAKE_SERVO_CONSTANTS.acceleration = 360; // degrees / second / second
+    INTAKE_SERVO_CONSTANTS.acceleration = 3600; // degrees / second / second
 
-    INTAKE_SERVO_CONSTANTS.softwareMax = Rotations.of(0.175);
+    INTAKE_SERVO_CONSTANTS.softwareMax = MAX_INTAKE_ARM_ANGLE;
     INTAKE_SERVO_CONSTANTS.softwareMin = Rotations.of(0);
     INTAKE_SERVO_CONSTANTS.enableSupplyCurrentLimit = true;
-    INTAKE_SERVO_CONSTANTS.supplyCurrentLimit = Amps.of(10);
+    INTAKE_SERVO_CONSTANTS.supplyCurrentLimit = Amps.of(20);
 
     INTAKE_SERVO_CONSTANTS.maxOutput = Volts.of(12.0);
     INTAKE_SERVO_CONSTANTS.neutralMode = NeutralModeValue.Brake;
+
+    INTAKE_SERVO_CONSTANTS.sensorMode = FeedbackSensorSourceValue.FusedCANcoder;
+
+    INTAKE_ENCODER_CONSTANTS.id = Ports.INTAKE_ENCODER;
+    INTAKE_ENCODER_CONSTANTS.config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+    INTAKE_ENCODER_CONSTANTS.config.MagnetSensor.SensorDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
+    INTAKE_ENCODER_CONSTANTS.config.MagnetSensor.MagnetOffset = ENCODER_OFFSET.in(Rotations);
+    INTAKE_ENCODER_CONSTANTS.statusSignalUpdateFrequency = Hertz.of(50);
   }
 }

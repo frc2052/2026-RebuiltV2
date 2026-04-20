@@ -8,6 +8,9 @@ import com.team2052.lib.subsystems.CANCoderConstants;
 import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemWithCANCoder;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import lombok.Getter;
 
 public class HoodSubsystem extends ServoSubsystemWithCANCoder {
@@ -30,8 +33,16 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
     lastGoalAngle = goalAngle;
   }
 
-  public void setToAngle(Angle angle) {
-    goalAngle = boundAngle(angle);
+  public Command setCommand(double degrees) {
+    return new InstantCommand(() -> set(Degrees.of(degrees)));
+  }
+
+  public Command setCommand(Angle position) {
+    return new InstantCommand(() -> set(position));
+  }
+
+  public void set(Angle target) {
+    goalAngle = boundAngle(target);
   }
 
   public boolean isAtAngle(Angle angle, Angle tolerance) {
@@ -49,10 +60,15 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
 
   @Override
   public void periodic() {
-    super.periodic();
-    if (goalAngle.in(Degrees) != lastGoalAngle.in(Degrees)) {
+    if (DriverStation.isDisabled()) {
+      goalAngle = getPosition();
+    }
+
+    if (lastGoalAngle.in(Degrees) != goalAngle.in(Degrees)) {
       setSetpointMotionMagic(goalAngle);
       lastGoalAngle = goalAngle;
     }
+
+    super.periodic();
   }
 }

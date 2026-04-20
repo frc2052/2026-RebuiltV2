@@ -69,23 +69,23 @@ public class Superstructure extends SubsystemBase {
   public void pushToSubsystems() {
     switch (currentState) {
       case NONE:
-        hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
+        hood.set(HoodConstants.HOOD_MIN_ANGLE);
         shooter.setGoalVelocity(RotationsPerSecond.of(0));
         break;
       case SHOOTING:
-        hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
+        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
         shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case OVERRIDE_SHOOTING:
-        hood.setToAngle(lastCalculatedProfile.aimingParameters.hoodAngle);
+        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
         shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case MANUAL:
-        hood.setToAngle(manualShootingParameters.getSecond());
+        hood.set(manualShootingParameters.getSecond());
         shooter.setGoalVelocity(manualShootingParameters.getFirst());
         break;
       case TRENCH:
-        hood.setToAngle(HoodConstants.HOOD_MIN_ANGLE);
+        hood.set(HoodConstants.HOOD_MIN_ANGLE);
         shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
         break;
       default:
@@ -136,7 +136,7 @@ public class Superstructure extends SubsystemBase {
 
     if (currentState == SuperstructureState.OVERRIDE_SHOOTING) {
       calculateShotProfile(overrideTarget);
-    } else {
+    } else if (currentFieldRegion != FieldRegion.NONE) {
       calculateShotProfile();
     }
   }
