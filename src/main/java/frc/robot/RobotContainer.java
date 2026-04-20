@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.FiringCommand;
 import frc.robot.commands.drive.AimingDriveCommand;
 import frc.robot.commands.drive.DefaultDriveCommand;
+import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.drive.DrivetrainConstants;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.feeder.FeederSubsystem;
@@ -47,6 +48,7 @@ public class RobotContainer {
   public final IntakePivotSubsystem intakePivot = IntakePivotSubsystem.getInstance();
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
+  public final LedSubsystem ledSubsystem = LedSubsystem.getInstance();
 
   public final T16000MJoystick translationJoystick = new T16000MJoystick(0);
   public final T16000MJoystick rotationJoystick = new T16000MJoystick(1);
@@ -329,5 +331,7 @@ public class RobotContainer {
     //                       + shooter.getGoalPoint().in(RotationsPerSecond)
     //                       + " RPS");
     //             }));
+
+    // Enable LEDs
   }
 }
