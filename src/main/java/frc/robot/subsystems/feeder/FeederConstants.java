@@ -13,7 +13,7 @@ import frc.robot.util.Ports;
 public class FeederConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
 
-  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(40);
+  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(85);
 
   static {
     ROLLER_CONFIG.name = "Feeder";

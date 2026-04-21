@@ -35,7 +35,7 @@ public final class IntakeConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    INTAKE_ROLLER_CONSTANTS.slot0kP = 10;
+    INTAKE_ROLLER_CONSTANTS.slot0kP = 20;
     INTAKE_ROLLER_CONSTANTS.slot0kI = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kD = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kS = 0;
@@ -45,7 +45,7 @@ public final class IntakeConstants {
     INTAKE_ROLLER_CONSTANTS.counterClockwisePositive = true;
     INTAKE_ROLLER_CONSTANTS.neutralMode = NeutralModeValue.Coast;
     INTAKE_ROLLER_CONSTANTS.sensorToMechanismRatio = 1; // (30.0 / 12);
-    INTAKE_ROLLER_CONSTANTS.statorCurrentLimit = Amps.of(60);
+    INTAKE_ROLLER_CONSTANTS.statorCurrentLimit = Amps.of(80);
     INTAKE_ROLLER_CONSTANTS.enableStatorCurrentLimit = true;
     INTAKE_ROLLER_CONSTANTS.supplyCurrentLimit = Amps.of(40);
     INTAKE_ROLLER_CONSTANTS.enableSupplyCurrentLimit = true;

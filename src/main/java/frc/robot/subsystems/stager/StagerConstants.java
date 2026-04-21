@@ -12,7 +12,7 @@ import frc.robot.util.Ports;
 public class StagerConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
 
-  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(40);
+  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(80);
 
   static {
     ROLLER_CONFIG.name = "Stager";
@@ -21,7 +21,7 @@ public class StagerConstants {
             .withId(Ports.STAGER_TOP_MOTOR.getFirst())
             .withBus(Ports.STAGER_TOP_MOTOR.getSecond());
 
-    ROLLER_CONFIG.slot0kP = 10;
+    ROLLER_CONFIG.slot0kP = 17;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;

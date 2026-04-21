@@ -54,8 +54,8 @@ public class RobotContainer {
   public final CommandJoystick secondaryPanel = new CommandJoystick(2);
 
   public RobotContainer() {
-    // configureMatchBindings();
-    configureTestBindings();
+    configureMatchBindings();
+    // configureTestBindings();
   }
 
   private void configureMatchBindings() {
@@ -119,6 +119,10 @@ public class RobotContainer {
         .whileTrue(intake.runIntakeCommand())
         .onTrue(intakePivot.setCommand(IntakePosition.OUT_POSITION));
 
+    rotationJoystick
+        .frontTrigger()
+        .whileTrue(shooter.runAtVelocityCommand(RotationsPerSecond.of(30)));
+
     // fire command
     translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
 
@@ -177,7 +181,7 @@ public class RobotContainer {
     Trigger halfwayIntake = new Trigger(() -> secondaryPanel.getX() < 0.5);
     halfwayIntake.onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
     Trigger intakeDown = new Trigger(() -> secondaryPanel.getX() > 0.5);
-    intakeDown.onFalse(intakePivot.setCommand(IntakePosition.IN_POSITION));
+    intakeDown.onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
 
     // stow intake
     secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
@@ -185,8 +189,17 @@ public class RobotContainer {
     // halfway intake
     secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
 
-    // in intake
-    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.IN_POSITION));
+    // intake out
+    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+
+    // set hood to min angle
+    secondaryPanel.button(10).onFalse(hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
+
+    // set hood to max angle
+    secondaryPanel.button(1).onFalse(hood.setCommand((HoodConstants.HOOD_MAX_ANGLE)));
+
+    // set hood to halfway degrees
+    secondaryPanel.button(6).onFalse(hood.setCommand(Degrees.of(15)));
   }
 
   private void configureTestBindings() {

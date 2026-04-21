@@ -13,7 +13,7 @@ import frc.robot.util.Ports;
 public final class FloorConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
 
-  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(40);
+  public static final AngularVelocity FIRING_VELOCITY = RotationsPerSecond.of(113);
 
   static {
     ROLLER_CONFIG.name = "Floor";
@@ -29,7 +29,7 @@ public final class FloorConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 8;
+    ROLLER_CONFIG.slot0kP = 12;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0.1;
     ROLLER_CONFIG.slot0kS = 0;

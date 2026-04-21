@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.*;
 
 import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.subsystems.RollerSubsystem;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +18,8 @@ public class ShooterSubsystem extends RollerSubsystem {
   @Getter @Setter private AngularVelocity goalPoint = RotationsPerSecond.of(0);
   private AngularVelocity lastGoal = RotationsPerSecond.of(0);
   @Getter @Setter private boolean runingOpenLoop = false;
+
+  private TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new Constraints(1, 0.25));
 
   public static ShooterSubsystem getInstance() {
     if (INSTANCE == null) {
@@ -48,12 +52,6 @@ public class ShooterSubsystem extends RollerSubsystem {
     if (goalPoint.in(RotationsPerSecond) != lastGoal.in(RotationsPerSecond)) {
       runingOpenLoop = true;
 
-      if (getVelocity().in(RotationsPerSecond) < goalPoint.in(RotationsPerSecond)) {
-        setOpenLoop(ShooterConstants.BANG_BANG_SPEED);
-      } else {
-        setOpenLoop(-ShooterConstants.BANG_BANG_SPEED);
-      }
-
       lastGoal = goalPoint;
     }
 
@@ -77,27 +75,36 @@ public class ShooterSubsystem extends RollerSubsystem {
             ShooterConstants.PID_USE_TOLERANCE.in(RotationsPerSecond))) {
 
       runingOpenLoop = true;
-      if (getVelocity().in(RotationsPerSecond) < goalPoint.in(RotationsPerSecond)) {
-        setOpenLoop(ShooterConstants.BANG_BANG_SPEED);
-      } else {
-        setOpenLoop(-ShooterConstants.BANG_BANG_SPEED);
-      }
+      setOpenLoop(goalPoint.in(RotationsPerSecond) / 96);
+      // trapezoidProfile.calculate(
+      //         Constants.MAIN_LOOP_PERIOD.in(Seconds),
+      //         new TrapezoidProfile.State(
+      //             getVelocity().in(RotationsPerSecond) / 96,
+      //             leader.getAcceleration().getValue().in(RotationsPerSecondPerSecond) / 96),
+      //         new TrapezoidProfile.State(goalPoint.in(RotationsPerSecond) / 96, 0))
+      //     .position);
     } else if ( // running open loop and not in bounds
     runingOpenLoop
         && !MathHelpers.epsilonEquals(
             getVelocity().in(RotationsPerSecond),
             goalPoint.in(RotationsPerSecond),
             ShooterConstants.PID_USE_TOLERANCE.in(RotationsPerSecond))) {
-
-      if (leader.get() > 0
-          && getVelocity().in(RotationsPerSecond) > goalPoint.in(RotationsPerSecond)) {
-        // if running forwards but goal is behind us, reverse it
-        setOpenLoop(-ShooterConstants.BANG_BANG_SPEED);
-      } else if (leader.get() < 0
-          && getVelocity().in(RotationsPerSecond) < goalPoint.in(RotationsPerSecond)) {
-        // if running backwards but goal is in front of us, revese it
-        setOpenLoop(ShooterConstants.BANG_BANG_SPEED);
-      }
+      System.out.println("Running open loop : " + goalPoint.in(RotationsPerSecond) / 96);
+      // + trapezoidProfile.calculate(
+      //         Constants.MAIN_LOOP_PERIOD.in(Seconds),
+      //         new TrapezoidProfile.State(
+      //             getVelocity().in(RotationsPerSecond) / 96,
+      //             leader.getAcceleration().getValue().in(RotationsPerSecondPerSecond) / 96),
+      //         new TrapezoidProfile.State(goalPoint.in(RotationsPerSecond) / 96, 0))
+      //     .position);
+      setOpenLoop(goalPoint.in(RotationsPerSecond) / 96);
+      // trapezoidProfile.calculate(
+      //         Constants.MAIN_LOOP_PERIOD.in(Seconds),
+      //         new TrapezoidProfile.State(
+      //             getVelocity().in(RotationsPerSecond) / 96,
+      //             leader.getAcceleration().getValue().in(RotationsPerSecondPerSecond) / 96),
+      //         new TrapezoidProfile.State(goalPoint.in(RotationsPerSecond) / 96, 0))
+      //     .position);
     }
   }
 }

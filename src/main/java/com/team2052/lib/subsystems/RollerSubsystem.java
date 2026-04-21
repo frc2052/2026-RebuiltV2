@@ -167,7 +167,7 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public void setOpenLoop(double output) {
-    leader.setControl(new DutyCycleOut(output));
+    leader.setControl(new DutyCycleOut(output).withEnableFOC(true));
   }
 
   /** Stop the roller motors by setting the goal velocity to 0. */

@@ -35,8 +35,8 @@ public class FiringCommand extends Command {
   @Override
   public void initialize() {
     floor.runAtFiringVelocity();
-    // stager.runAtFiringVelocity();
-    // feeder.runAtFiringVelocity();
+    stager.runAtFiringVelocity();
+    feeder.runAtFiringVelocity();
   }
 
   @Override

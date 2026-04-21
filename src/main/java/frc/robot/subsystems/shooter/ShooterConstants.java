@@ -16,7 +16,7 @@ public final class ShooterConstants {
 
   public static final double BANG_BANG_SPEED = 1;
 
-  public static final AngularVelocity PID_USE_TOLERANCE = RotationsPerSecond.of(15);
+  public static final AngularVelocity PID_USE_TOLERANCE = RotationsPerSecond.of(10);
 
   static {
     ROLLER_CONFIG.name = "Shooter";
@@ -58,5 +58,7 @@ public final class ShooterConstants {
     ROLLER_CONFIG.enableStatorCurrentLimit = true;
     ROLLER_CONFIG.supplyCurrentLimit = Amps.of(40);
     ROLLER_CONFIG.enableSupplyCurrentLimit = true;
+
+    // ROLLER_CONFIG.rampRate = 0.5;
   }
 }
