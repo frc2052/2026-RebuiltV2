@@ -18,7 +18,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
-import frc.robot.subsystems.vision.VisionConstants.ChassisLimelightConstants;
+import frc.robot.subsystems.vision.VisionConstants.BackLimelightConstants;
+import frc.robot.subsystems.vision.VisionConstants.LeftLimelightConstants;
+import frc.robot.subsystems.vision.VisionConstants.RightLimelightConstants;
 import frc.robot.util.FieldConstants;
 import java.util.Arrays;
 import java.util.Optional;
@@ -52,18 +54,18 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   private void configureLimelights() {
-    LimelightCamera.CHASSIS
+    LimelightCamera.BACK
         .getTable()
         .getEntry("camerapose_robotspace_set")
-        .setDoubleArray(ChassisLimelightConstants.LIMELIGHT_POSE);
+        .setDoubleArray(BackLimelightConstants.LIMELIGHT_POSE);
 
     // set double to 1 for enable, 0 to disable
-    LimelightCamera.CHASSIS.getTable().getEntry("rewind_enable_set").setDouble(0);
+    LimelightCamera.BACK.getTable().getEntry("rewind_enable_set").setDouble(0);
   }
 
   @Override
   public void periodic() {
-    filter(readMT1(LimelightCamera.CHASSIS, previousChassisEstimate))
+    filter(readMT1(LimelightCamera.BACK, previousChassisEstimate))
         .ifPresent(
             e -> {
               RobotState.getInstance().setChassisVisionFieldPose(e.pose);
@@ -73,7 +75,7 @@ public class VisionSubsystem extends SubsystemBase {
                       Utils.fpgaToCurrentTime(e.timestampSeconds),
                       calculateStandardDeviation(e));
             });
-    pushYaw(LimelightCamera.CHASSIS);
+    pushYaw(LimelightCamera.BACK);
 
     NetworkTableInstance.getDefault().flush();
   }
@@ -180,7 +182,9 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public enum LimelightCamera {
-    CHASSIS(ChassisLimelightConstants.CAMERA_NAME);
+    LEFT(LeftLimelightConstants.CAMERA_NAME),
+    BACK(BackLimelightConstants.CAMERA_NAME),
+    RIGHT(RightLimelightConstants.CAMERA_NAME);
 
     private final String cameraName;
     private final NetworkTable table;

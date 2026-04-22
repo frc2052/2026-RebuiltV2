@@ -58,11 +58,8 @@ public class ShootingCalculator {
         targetParameters.targetType.getShootingTable().getShootingParameters(distanceToTarget);
 
     Rotation2d rotationToTarget =
-        targetParameters
-            .targetPosition
-            .minus(robotPose.getTranslation())
-            .getAngle()
-            .plus(Rotation2d.k180deg);
+        targetParameters.targetPosition.minus(robotPose.getTranslation()).getAngle();
+    // .plus(Rotation2d.k180deg);
     AimingParameters aimingParameters =
         new AimingParameters(
             shootingParameters.getFirst(), shootingParameters.getSecond(), rotationToTarget);

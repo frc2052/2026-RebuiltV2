@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.feeder.FeederSubsystem;
 import frc.robot.subsystems.floor.FloorSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 
@@ -15,7 +14,6 @@ import frc.robot.subsystems.stager.StagerSubsystem;
 public class FiringCommand extends Command {
 
   private FloorSubsystem floor = FloorSubsystem.getInstance();
-  private FeederSubsystem feeder = FeederSubsystem.getInstance();
   private StagerSubsystem stager = StagerSubsystem.getInstance();
 
   private Time timeout = null;
@@ -23,7 +21,7 @@ public class FiringCommand extends Command {
 
   public FiringCommand() {
 
-    addRequirements(floor, stager, feeder);
+    addRequirements(floor, stager);
   }
 
   public FiringCommand(Time timeout) {
@@ -36,7 +34,6 @@ public class FiringCommand extends Command {
   public void initialize() {
     floor.runAtFiringVelocity();
     stager.runAtFiringVelocity();
-    feeder.runAtFiringVelocity();
   }
 
   @Override
@@ -47,7 +44,6 @@ public class FiringCommand extends Command {
   public void end(boolean interrupted) {
     floor.stopMotor();
     stager.stopMotor();
-    feeder.stopMotor();
     timer.stop();
     timer.reset();
   }

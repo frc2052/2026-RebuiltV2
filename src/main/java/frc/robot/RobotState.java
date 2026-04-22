@@ -4,6 +4,8 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.team2052.lib.helpers.MathHelpers;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +14,7 @@ public class RobotState {
   @Setter @Getter private Pose2d autoStartPose;
   @Setter @Getter private Pose2d chassisVisionFieldPose = new Pose2d();
   @Setter @Getter private boolean firstShiftOverride = false;
+  Field2d field2d = new Field2d();
 
   private static RobotState INSTANCE;
 
@@ -22,7 +25,9 @@ public class RobotState {
     return INSTANCE;
   }
 
-  private RobotState() {}
+  private RobotState() {
+    SmartDashboard.putData("Field", field2d);
+  }
 
   public Pose2d getFieldToRobot() {
     if (drivetrainState.Pose != null) {
@@ -47,5 +52,7 @@ public class RobotState {
     firstShiftOverride = !firstShiftOverride;
   }
 
-  public void output() {}
+  public void output() {
+    field2d.setRobotPose(drivetrainState.Pose);
+  }
 }

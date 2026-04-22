@@ -23,7 +23,7 @@ public class FeederConstants {
             .withBus(Ports.STAGER_BOTTOM_MOTOR.getSecond())
             .withInvertMotorOutput(MotorAlignmentValue.Aligned);
 
-    ROLLER_CONFIG.slot0kP = 15;
+    ROLLER_CONFIG.slot0kP = 18;
     ROLLER_CONFIG.slot0kI = 0;
     ROLLER_CONFIG.slot0kD = 0;
     ROLLER_CONFIG.slot0kS = 0;
@@ -37,7 +37,7 @@ public class FeederConstants {
     ROLLER_CONFIG.neutralMode = NeutralModeValue.Coast;
     ROLLER_CONFIG.slot0kDeadband = 0.05;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
-    ROLLER_CONFIG.statorCurrentLimit = Amps.of(40);
+    ROLLER_CONFIG.statorCurrentLimit = Amps.of(80);
     ROLLER_CONFIG.enableStatorCurrentLimit = true;
   }
 }

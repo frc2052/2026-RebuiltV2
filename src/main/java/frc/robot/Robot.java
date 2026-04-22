@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
     // Reset the shot profile calculation flag at the start of each period
     Superstructure.getInstance().setHasCalculatedShotProfileThisPeriod(false);
     CommandScheduler.getInstance().run();
+    RobotState.getInstance().output();
   }
 
   @Override

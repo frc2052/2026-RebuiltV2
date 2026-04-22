@@ -139,6 +139,12 @@ public class Superstructure extends SubsystemBase {
     } else if (currentFieldRegion != FieldRegion.NONE) {
       calculateShotProfile();
     }
+    if (lastCalculatedProfile != null) {
+      System.out.println(
+          "shooter at "
+              + lastCalculatedProfile.aimingParameters.shooterVelocity.in(RotationsPerSecond));
+      pushToSubsystems();
+    }
   }
 
   /**
@@ -151,8 +157,7 @@ public class Superstructure extends SubsystemBase {
       return; // Prevent recalculating multiple times in the same period
     }
 
-    lastCalculatedProfile =
-        ShootingCalculator.calculateShotProfile(hasCalculatedShotProfileThisPeriod, targetType);
+    lastCalculatedProfile = ShootingCalculator.calculateShotProfile(false, targetType);
     hasCalculatedShotProfileThisPeriod = true;
   }
 

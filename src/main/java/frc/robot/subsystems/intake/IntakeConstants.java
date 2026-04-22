@@ -56,8 +56,8 @@ public final class IntakeConstants {
   public static final Angle UP_POSITION = Rotations.of(0.584697);
   public static final Angle HALFWAY_POSITION = Degrees.of(32);
   public static final Angle STOW_POSITION = Degrees.of(52.5);
-  public static final Angle DOWN_POSITION = Rotations.of(0);
-  public static final Angle MIN_INTAKE_ARM_ANGLE = Rotations.of(0);
+  public static final Angle DOWN_POSITION = Rotations.of(0.01);
+  public static final Angle MIN_INTAKE_ARM_ANGLE = Rotations.of(0.01);
   public static final Angle MAX_INTAKE_ARM_ANGLE = Rotations.of(0.590088);
 
   public static final ServoSubsystemConstants INTAKE_SERVO_CONSTANTS =

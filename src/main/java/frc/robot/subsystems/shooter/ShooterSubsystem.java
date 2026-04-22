@@ -89,7 +89,7 @@ public class ShooterSubsystem extends RollerSubsystem {
             getVelocity().in(RotationsPerSecond),
             goalPoint.in(RotationsPerSecond),
             ShooterConstants.PID_USE_TOLERANCE.in(RotationsPerSecond))) {
-      System.out.println("Running open loop : " + goalPoint.in(RotationsPerSecond) / 96);
+      // System.out.println("Running open loop : " + goalPoint.in(RotationsPerSecond) / 96);
       // + trapezoidProfile.calculate(
       //         Constants.MAIN_LOOP_PERIOD.in(Seconds),
       //         new TrapezoidProfile.State(
