@@ -6,6 +6,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -27,8 +28,8 @@ public class RollerSubsystem extends SubsystemBase {
   protected RollerSubsystemConstants constants;
   protected final VelocityTorqueCurrentFOC velocityControl =
       new VelocityTorqueCurrentFOC(0).withSlot(0);
-  // protected final VelocityDutyCycle velocityControl = new VelocityDutyCycle(0).withSlot(0);
-  protected final VoltageOut voltage = new VoltageOut(0);
+  protected final CoastOut coastControl = new CoastOut();
+  protected final VoltageOut voltageControl = new VoltageOut(0);
   protected TalonFXConfiguration leaderConfig;
   protected TalonFXConfiguration[] followerConfigs;
   protected AngularVelocity goalVelocity;
@@ -131,6 +132,11 @@ public class RollerSubsystem extends SubsystemBase {
     return velocitySignal.getValue();
   }
 
+  /** Sets the motor to coast mode. */
+  public void setCoastOut() {
+      leader.setControl(coastControl);
+  }
+
   /**
    * Set the goal velocity of the roller subsystem. Will be clamped to the max velocity set in
    * constants if it is not 0.
@@ -163,7 +169,7 @@ public class RollerSubsystem extends SubsystemBase {
   }
 
   public void setOpenLoop(Voltage volts) {
-    leader.setControl(voltage.withOutput(volts));
+    leader.setControl(voltageControl.withOutput(volts));
   }
 
   public void setOpenLoop(double output) {

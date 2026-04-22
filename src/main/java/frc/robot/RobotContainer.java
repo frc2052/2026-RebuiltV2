@@ -123,14 +123,6 @@ public class RobotContainer {
 
     rotationJoystick
         .frontTrigger()
-        // .onTrue(
-        //     shooter
-        //         .runAtVelocityCommand(RotationsPerSecond.of(30))
-        //         .alongWith(feeder.runAtVelocityCommand(RotationsPerSecond.of(85))))
-        // .onFalse(
-        //     shooter
-        //         .runAtVelocityCommand(RotationsPerSecond.of(0))
-        //         .alongWith(feeder.runAtVelocityCommand(RotationsPerSecond.of(0))));
         .onTrue(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // fire command

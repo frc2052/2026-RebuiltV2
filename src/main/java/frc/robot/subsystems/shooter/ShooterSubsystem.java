@@ -17,7 +17,7 @@ public class ShooterSubsystem extends RollerSubsystem {
 
   @Getter @Setter private AngularVelocity goalPoint = RotationsPerSecond.of(0);
   private AngularVelocity lastGoal = RotationsPerSecond.of(0);
-  @Getter @Setter private boolean runingOpenLoop = false;
+  @Getter @Setter private boolean runningOpenLoop = false;
 
   private TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new Constraints(1, 0.25));
 
@@ -41,7 +41,7 @@ public class ShooterSubsystem extends RollerSubsystem {
   public void stopMotor() {
     goalPoint = RotationsPerSecond.of(0);
     lastGoal = RotationsPerSecond.of(0);
-    runingOpenLoop = false;
+    runningOpenLoop = false;
     super.stopMotor();
   }
 
@@ -50,7 +50,7 @@ public class ShooterSubsystem extends RollerSubsystem {
     super.periodic();
 
     if (goalPoint.in(RotationsPerSecond) != lastGoal.in(RotationsPerSecond)) {
-      runingOpenLoop = true;
+      runningOpenLoop = true;
 
       lastGoal = goalPoint;
     }
@@ -59,22 +59,22 @@ public class ShooterSubsystem extends RollerSubsystem {
     if (goalPoint.in(RotationsPerSecond) == 0) return;
 
     if ( // running open loop and within bounds
-    runingOpenLoop
+    runningOpenLoop
         && MathHelpers.epsilonEquals(
             getVelocity().in(RotationsPerSecond),
             goalPoint.in(RotationsPerSecond),
             ShooterConstants.PID_USE_TOLERANCE.in(RotationsPerSecond))) {
       setGoalVelocity(goalPoint);
-      runingOpenLoop = false;
+      runningOpenLoop = false;
 
     } else if ( // not running open loop but not within bounds
-    !runingOpenLoop
+    !runningOpenLoop
         && !MathHelpers.epsilonEquals(
             getVelocity().in(RotationsPerSecond),
             goalPoint.in(RotationsPerSecond),
             ShooterConstants.PID_USE_TOLERANCE.in(RotationsPerSecond))) {
 
-      runingOpenLoop = true;
+      runningOpenLoop = true;
       setOpenLoop(goalPoint.in(RotationsPerSecond) / 96);
       // trapezoidProfile.calculate(
       //         Constants.MAIN_LOOP_PERIOD.in(Seconds),
@@ -84,7 +84,7 @@ public class ShooterSubsystem extends RollerSubsystem {
       //         new TrapezoidProfile.State(goalPoint.in(RotationsPerSecond) / 96, 0))
       //     .position);
     } else if ( // running open loop and not in bounds
-    runingOpenLoop
+    runningOpenLoop
         && !MathHelpers.epsilonEquals(
             getVelocity().in(RotationsPerSecond),
             goalPoint.in(RotationsPerSecond),

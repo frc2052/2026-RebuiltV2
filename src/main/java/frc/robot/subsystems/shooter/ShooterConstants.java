@@ -58,7 +58,5 @@ public final class ShooterConstants {
     ROLLER_CONFIG.enableStatorCurrentLimit = true;
     ROLLER_CONFIG.supplyCurrentLimit = Amps.of(40);
     ROLLER_CONFIG.enableSupplyCurrentLimit = true;
-
-    // ROLLER_CONFIG.rampRate = 0.5;
   }
 }

@@ -70,7 +70,7 @@ public class Superstructure extends SubsystemBase {
     switch (currentState) {
       case NONE:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);
-        shooter.setGoalVelocity(RotationsPerSecond.of(0));
+        shooter.setCoastOut();
         break;
       case SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
@@ -86,7 +86,7 @@ public class Superstructure extends SubsystemBase {
         break;
       case TRENCH:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);
-        shooter.setGoalVelocity(ShooterConstants.IDLE_VELOCITY);
+        shooter.setCoastOut();
         break;
       default:
         // do nothing
