@@ -166,6 +166,9 @@ public class Superstructure extends SubsystemBase {
    * which target use used.
    */
   public void calculateShotProfile() {
+    if (currentFieldRegion == FieldRegion.NONE) {
+      return; // Not in a valid shooting region, so don't calculate a shot profile
+    }
     calculateShotProfile(currentFieldRegion.getAssociatedTargetType());
   }
 
