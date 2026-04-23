@@ -18,7 +18,7 @@ public class FloorSubsystem extends RollerSubsystem {
   }
 
   public void runAtFiringVelocity() {
-    setGoalVelocity(FloorConstants.FIRING_VELOCITY);
+    setGoalVelocityTorque(FloorConstants.FIRING_VELOCITY);
   }
 
   public Command scoreCommand() {

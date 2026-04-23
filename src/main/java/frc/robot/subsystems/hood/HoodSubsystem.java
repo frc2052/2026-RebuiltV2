@@ -9,6 +9,7 @@ import com.team2052.lib.subsystems.ServoSubsystemConstants;
 import com.team2052.lib.subsystems.ServoSubsystemWithCANCoder;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import lombok.Getter;
@@ -68,5 +69,8 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
     lastGoalAngle = goalAngle;
 
     super.periodic();
+
+    SmartDashboard.putNumber("Hood Goal", getGoalAngle().in(Degrees));
+    SmartDashboard.putNumber("Hood Angle", getPosition().in(Degrees));
   }
 }

@@ -27,6 +27,17 @@ public class RollerSubsystemConstants {
   public double slot0kDeadband = 0;
   public double rampRate = 0;
 
+  public double slot1kP = 0;
+  public double slot1kI = 0;
+  public double slot1kD = 0;
+  public double slot1kV = 0;
+  public double slot1kA = 0;
+  public double slot1kS = 0;
+
+  public double motionMagicAcceleration = 0; // rps/s
+  public double motionMagicJerk = 0; // rps/s/s
+  public double motionMagicFeedForward = 0;
+
   public Current supplyCurrentLimit = Amps.of(60);
   public Current supplyCurrentThreshold = Amps.of(60);
   public Time supplyCurrentTimeout = Seconds.of(0.0);

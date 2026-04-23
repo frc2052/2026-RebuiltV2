@@ -47,6 +47,17 @@ public final class ShooterConstants {
     ROLLER_CONFIG.slot0kV = 0.16; // 0.16
     ROLLER_CONFIG.slot0kA = 0;
 
+    ROLLER_CONFIG.slot1kP = 0;
+    ROLLER_CONFIG.slot1kI = 0;
+    ROLLER_CONFIG.slot1kD = 0;
+    ROLLER_CONFIG.slot1kS = 0;
+    ROLLER_CONFIG.slot1kV = 0;
+    ROLLER_CONFIG.slot1kA = 0;
+
+    ROLLER_CONFIG.motionMagicAcceleration = 50;
+    ROLLER_CONFIG.motionMagicJerk = 0;
+    ROLLER_CONFIG.motionMagicFeedForward = 0;
+
     ROLLER_CONFIG.followerRateHz = 1000;
 
     ROLLER_CONFIG.maxAngularVelocity = RotationsPerSecond.of(96);

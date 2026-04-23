@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotState;
 import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.subsystems.superstructure.SuperstructureConstants;
@@ -45,7 +46,7 @@ public class ShootingCalculator {
     Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
     Distance distanceToTarget =
         Meters.of(robotPose.getTranslation().getDistance(targetParameters.targetPosition));
-
+    SmartDashboard.putNumber("Distance to Target", distanceToTarget.in(Meters));
     if (targetParameters.targetType.isFeeding()) {
       targetParameters =
           new TargetParameters(

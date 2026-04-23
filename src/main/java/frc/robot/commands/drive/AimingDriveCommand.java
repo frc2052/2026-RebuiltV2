@@ -6,7 +6,6 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.util.ShotProfile;
-
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -56,7 +55,7 @@ public class AimingDriveCommand extends SnapToAngleCommand {
       } else {
         superstructure.recalculateShotProfile();
       }
-      profile =  superstructure.getLastCalculatedProfile();
+      profile = superstructure.getLastCalculatedProfile();
     }
 
     if (profile == null) {

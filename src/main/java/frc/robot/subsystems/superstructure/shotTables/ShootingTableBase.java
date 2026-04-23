@@ -36,6 +36,13 @@ public class ShootingTableBase {
     double distanceMeters = distance.in(Meters);
     double shooterVelocityRPS = angularVelocityMap.get(distanceMeters);
     double hoodAngleDegrees = angleMap.get(distanceMeters);
+    // System.out.println(
+    //     "Distance: "
+    //         + distance.in(Meters)
+    //         + " Velocity: "
+    //         + shooterVelocityRPS
+    //         + " Angle: "
+    //         + hoodAngleDegrees);
     return new Pair<>(RotationsPerSecond.of(shooterVelocityRPS), Degrees.of(hoodAngleDegrees));
   }
 }

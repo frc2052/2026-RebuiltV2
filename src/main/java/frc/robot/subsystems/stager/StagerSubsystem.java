@@ -18,7 +18,7 @@ public class StagerSubsystem extends RollerSubsystem {
   }
 
   public void runAtFiringVelocity() {
-    setGoalVelocity(StagerConstants.FIRING_VELOCITY);
+    setGoalVelocityTorque(StagerConstants.FIRING_VELOCITY);
   }
 
   public Command scoreCommand() {

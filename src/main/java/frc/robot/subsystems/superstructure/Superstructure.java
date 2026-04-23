@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.subsystems.hood.HoodConstants;
 import frc.robot.subsystems.hood.HoodSubsystem;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.superstructure.shotTables.FeedingShootingTable;
 import frc.robot.subsystems.superstructure.shotTables.HubShootingTable;
@@ -74,15 +73,15 @@ public class Superstructure extends SubsystemBase {
         break;
       case SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalVelocityTorque(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case OVERRIDE_SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalVelocity(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalVelocityTorque(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case MANUAL:
         hood.set(manualShootingParameters.getSecond());
-        shooter.setGoalVelocity(manualShootingParameters.getFirst());
+        shooter.setGoalVelocityTorque(manualShootingParameters.getFirst());
         break;
       case TRENCH:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);
@@ -140,9 +139,9 @@ public class Superstructure extends SubsystemBase {
       calculateShotProfile();
     }
     if (lastCalculatedProfile != null) {
-      System.out.println(
-          "shooter at "
-              + lastCalculatedProfile.aimingParameters.shooterVelocity.in(RotationsPerSecond));
+      // System.out.println(
+      //     "shooter at "
+      //         + lastCalculatedProfile.aimingParameters.shooterVelocity.in(RotationsPerSecond));
       pushToSubsystems();
     }
   }

@@ -23,11 +23,11 @@ public class IntakeRollerSubsystem extends RollerSubsystem {
   }
 
   public void runIntake() {
-    setGoalVelocity(IntakeConstants.INTAKE_VELOCITY);
+    setGoalVelocityTorque(IntakeConstants.INTAKE_VELOCITY);
   }
 
   public void runOuttake() {
-    setGoalVelocity(IntakeConstants.INTAKE_VELOCITY.unaryMinus());
+    setGoalVelocityTorque(IntakeConstants.INTAKE_VELOCITY.unaryMinus());
   }
 
   public Command runIntakeCommand() {

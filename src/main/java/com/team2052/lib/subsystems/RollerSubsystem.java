@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -28,11 +29,13 @@ public class RollerSubsystem extends SubsystemBase {
   protected RollerSubsystemConstants constants;
   protected final VelocityTorqueCurrentFOC velocityControl =
       new VelocityTorqueCurrentFOC(0).withSlot(0);
+  protected final MotionMagicVelocityTorqueCurrentFOC motionMagicControl =
+      new MotionMagicVelocityTorqueCurrentFOC(0).withSlot(1);
   protected final CoastOut coastControl = new CoastOut();
   protected final VoltageOut voltageControl = new VoltageOut(0);
   protected TalonFXConfiguration leaderConfig;
   protected TalonFXConfiguration[] followerConfigs;
-  protected AngularVelocity goalVelocity;
+  protected AngularVelocity goalVelocity = RotationsPerSecond.of(0);
 
   private final StatusSignal<AngularVelocity> velocitySignal;
   private final StatusSignal<Current> torqueCurrentSignal;
@@ -54,6 +57,18 @@ public class RollerSubsystem extends SubsystemBase {
     leaderConfig.Slot0.kV = constants.slot0kV;
     leaderConfig.Slot0.kA = constants.slot0kA;
     leaderConfig.Slot0.kS = constants.slot0kS;
+
+    leaderConfig.Slot1.kP = constants.slot1kP;
+    leaderConfig.Slot1.kI = constants.slot1kI;
+    leaderConfig.Slot1.kD = constants.slot1kD;
+    leaderConfig.Slot1.kV = constants.slot1kV;
+    leaderConfig.Slot1.kA = constants.slot1kA;
+    leaderConfig.Slot1.kS = constants.slot1kS;
+
+    leaderConfig.MotionMagic.MotionMagicAcceleration = constants.motionMagicAcceleration;
+    leaderConfig.MotionMagic.MotionMagicJerk = constants.motionMagicJerk;
+
+    motionMagicControl.FeedForward = constants.motionMagicFeedForward;
 
     leaderConfig.MotorOutput.Inverted =
         (constants.counterClockwisePositive
@@ -134,7 +149,7 @@ public class RollerSubsystem extends SubsystemBase {
 
   /** Sets the motor to coast mode. */
   public void setCoastOut() {
-      leader.setControl(coastControl);
+    leader.setControl(coastControl);
   }
 
   /**
@@ -143,7 +158,7 @@ public class RollerSubsystem extends SubsystemBase {
    *
    * @param goalVelocity The desired velocity for the roller subsystem
    */
-  public void setGoalVelocity(AngularVelocity goalVelocity) {
+  public void setGoalVelocityTorque(AngularVelocity goalVelocity) {
     this.goalVelocity = goalVelocity;
     if (constants.maxAngularVelocity.in(RotationsPerSecond) != 0) {
       this.goalVelocity =
@@ -158,6 +173,19 @@ public class RollerSubsystem extends SubsystemBase {
     // constants.name + "/Goal Velocity RPS", this.goalVelocity.in(RotationsPerSecond));
   }
 
+  public void setGoalVelocityMotionMagic(AngularVelocity goalVelocity) {
+    this.goalVelocity = goalVelocity;
+    if (constants.maxAngularVelocity.in(RotationsPerSecond) != 0) {
+      this.goalVelocity =
+          RotationsPerSecond.of(
+              MathHelpers.clamp(
+                  goalVelocity.in(RotationsPerSecond),
+                  constants.maxAngularVelocity.unaryMinus().in(RotationsPerSecond),
+                  constants.maxAngularVelocity.in(RotationsPerSecond)));
+    }
+    leader.setControl(motionMagicControl.withVelocity(goalVelocity));
+  }
+
   /**
    * Set the motor output as a percentage of the max velocity defined in constants. Will be clamped
    * to the max velocity if it is not 0.
@@ -165,7 +193,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @param pct The desired motor output percentage, between -1 and 1
    */
   public void setMotorPct(double pct) {
-    setGoalVelocity(constants.maxAngularVelocity.times(pct));
+    setGoalVelocityTorque(constants.maxAngularVelocity.times(pct));
   }
 
   public void setOpenLoop(Voltage volts) {
@@ -184,7 +212,7 @@ public class RollerSubsystem extends SubsystemBase {
 
   /** Reverse the direction of the roller motors by negating the current goal velocity. */
   public void reverseMotor() {
-    setGoalVelocity(goalVelocity.unaryMinus());
+    setGoalVelocityTorque(goalVelocity.unaryMinus());
   }
 
   /**
@@ -258,7 +286,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @return A Command that runs the roller at the specified velocity
    */
   public Command runAtVelocityCommand(AngularVelocity velocity) {
-    return Commands.runEnd(() -> setGoalVelocity(velocity), () -> stopMotor(), this);
+    return Commands.runEnd(() -> setGoalVelocityTorque(velocity), () -> stopMotor(), this);
   }
 
   /**

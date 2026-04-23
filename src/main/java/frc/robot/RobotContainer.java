@@ -239,15 +239,17 @@ public class RobotContainer {
         .whileTrue(
             Commands.sequence(
                 superstructure.setStateCommand(SuperstructureState.SHOOTING),
-                new AimingDriveCommand(
-                    translationJoystick::getY,
-                    translationJoystick::getX,
-                    rotationJoystick::getX,
-                    () -> true, // field centric
-                    () -> false, // use SOTM
-                    () -> translationJoystick.middleThumbButton().getAsBoolean(), // lock wheels
-                    Optional.empty() // default target type
-                    )));
+                Commands.parallel(
+                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                    new AimingDriveCommand(
+                        translationJoystick::getY,
+                        translationJoystick::getX,
+                        rotationJoystick::getX,
+                        () -> true, // field centric
+                        () -> false, // use SOTM
+                        () -> translationJoystick.middleThumbButton().getAsBoolean(), // lock wheels
+                        Optional.empty() // default target type
+                        ))));
     translationJoystick
         .frontTrigger()
         .whileTrue(intake.runIntakeCommand())

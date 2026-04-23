@@ -18,7 +18,7 @@ public class FeederSubsystem extends RollerSubsystem {
   }
 
   public void runAtFiringVelocity() {
-    setGoalVelocity(FeederConstants.FIRING_VELOCITY);
+    setGoalVelocityTorque(FeederConstants.FIRING_VELOCITY);
   }
 
   public Command scoreCommand() {
