@@ -1,0 +1,16 @@
+When you want to make a new auto:
+
+1. Set up the paths you need in Choreo (the application)
+    - Make sure to follow the naming convention
+2. List any new paths in @ChorPaths.java
+3. Create the method in @AutoFactory.java
+    - returns a Pair of your initial pose (Pose2d) & what happens in your auto (Command)
+    - use existing createAuto() methods as an example!
+4. List the auto as an enum identifier in @Autos.java
+    - param1: reference to the AutoFactory method you created in step 3
+5. Yay, now you've made a full auto!
+
+Notes for Afomia
+- make / carry over all the paths & comment out the order of events
+- actually write all Autos
+- verify state / scoring logic
