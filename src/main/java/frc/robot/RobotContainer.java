@@ -7,7 +7,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.input.T16000MJoystick;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +31,7 @@ import frc.robot.subsystems.intake.IntakeRollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure.FieldRegion;
 import frc.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -173,10 +176,59 @@ public class RobotContainer {
                         rotationJoystick::getX,
                         () -> true, // field centric
                         () -> false, // use SOTM
-                        () -> translationJoystick.middleThumbButton().getAsBoolean(), // lock wheels
+                        () ->
+                            MathHelpers.epsilonEquals(
+                                    MathUtil.angleModulus(
+                                        superstructure
+                                                .getLastCalculatedProfile()
+                                                .aimingParameters
+                                                .robotRotation
+                                                .getRadians()
+                                            + Math.PI),
+                                    MathUtil.angleModulus(
+                                        RobotState.getInstance()
+                                            .getFieldToRobot()
+                                            .getRotation()
+                                            .getRadians()),
+                                    Math.toRadians(3))
+                                && superstructure
+                                    .getCurrentFieldRegion()
+                                    .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
                         Optional.empty() // default target type
                         ))))
+        .whileTrue(
+            Commands.sequence(
+                Commands.waitSeconds(0.5),
+                Commands.waitUntil(
+                    () ->
+                        (shooter.isAtGoalVelocity(RotationsPerSecond.of(1))
+                            && MathHelpers.epsilonEquals(
+                                MathUtil.angleModulus(
+                                    superstructure
+                                            .getLastCalculatedProfile()
+                                            .aimingParameters
+                                            .robotRotation
+                                            .getRadians()
+                                        + Math.PI),
+                                MathUtil.angleModulus(
+                                    RobotState.getInstance()
+                                        .getFieldToRobot()
+                                        .getRotation()
+                                        .getRadians()),
+                                Math.toRadians(3)))), // .withTimeout(2),
+                Commands.waitSeconds(0.2),
+                new FiringCommand()))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    translationJoystick
+        .leftThumbButton()
+        .whileTrue(
+            Commands.parallel(
+                intake.runOuttakeCommand(),
+                floor.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                stager.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                intakePivot.setCommand(IntakePosition.OUT_POSITION)));
 
     // aim to default target
 
@@ -249,7 +301,15 @@ public class RobotContainer {
                         () -> false, // use SOTM
                         () -> translationJoystick.middleThumbButton().getAsBoolean(), // lock wheels
                         Optional.empty() // default target type
-                        ))));
+                        ))))
+        .whileTrue(
+            Commands.sequence(
+                Commands.waitSeconds(0.5),
+                Commands.deadline(
+                    Commands.waitUntil(
+                        () ->
+                            shooter.isAtGoalVelocity(RotationsPerSecond.of(5))), // .withTimeout(2),
+                    new FiringCommand())));
     translationJoystick
         .frontTrigger()
         .whileTrue(intake.runIntakeCommand())
