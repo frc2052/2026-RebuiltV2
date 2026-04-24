@@ -85,34 +85,98 @@ public class AutoFactory {
   }
 
   Pair<Pose2d, Command> preloadOnlyLeft() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.PRELOAD_ONLY_LEFT), 
+        Commands.sequence(
+            simpleScore(TargetType.HUB, 5),
+            postScoringCleanup()
+        ));
   }
 
   Pair<Pose2d, Command> preloadOnlyRight() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.PRELOAD_ONLY_RIGHT), 
+        Commands.sequence(
+            simpleScore(TargetType.HUB, 5),
+            postScoringCleanup()
+        ));
   }
 
   Pair<Pose2d, Command> preloadOnlyCenter() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.CENTER_BACKUP), 
+        Commands.sequence(
+            followPathCommand(ChorPaths.CENTER_BACKUP),
+            simpleScore(TargetType.HUB, 5),
+            postScoringCleanup()
+        ));
   }
 
   // LEFT AUTOS
 
   Pair<Pose2d, Command> leftSingleTrenchSweep() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1), 
+        Commands.sequence(
+            sprintOrScorePreload(),
+            postScoringCleanup(),
+            Commands.waitSeconds(0.2), // wait b4 going under trench
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1),
+                    followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)
+                ), 
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 5.5),
+            postScoringCleanup()
+        ));
   }
 
   Pair<Pose2d, Command> leftDoubleSweep() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1), 
+        Commands.sequence(
+            leftSingleTrenchSweep().getSecond(),
+            Commands.deadline(
+                followPathCommand(ChorPaths.LTRENCH_HUB), 
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            // return to shoot
+            followPathCommand(ChorPaths.LNEUTRAL_LBUMP),
+            scoreWhileActuatingHalfway(TargetType.HUB, 5)
+        ));
   }
 
   // RIGHT AUTOS
   Pair<Pose2d, Command> rightSingleTrenchSweep() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1), 
+        Commands.sequence(
+            sprintOrScorePreload(),
+            postScoringCleanup(),
+            Commands.waitSeconds(0.2), // wait b4 going under trench
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1),
+                    followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)
+                ), 
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 5.5),
+            postScoringCleanup()
+        ));
   }
 
   Pair<Pose2d, Command> rightDoubleSweep() {
-    return Pair.of(new Pose2d(), Commands.none());
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
+        Commands.sequence(
+            rightSingleTrenchSweep().getSecond(),
+            Commands.deadline(
+                followPathCommand(ChorPaths.RTRENCH_HUB), 
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            // reutrn to shoot
+            followPathCommand(ChorPaths.LNEUTRAL_LBUMP),
+            scoreWhileActuatingHalfway(TargetType.HUB, 5)
+        ));
   }
 
   // CENTER AUTOS
@@ -207,24 +271,7 @@ public class AutoFactory {
     return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.TRENCH));
   }
 
-  // TODO: do i just set to a scoring state? then run the intake or how do i do this
-  public Command socreWithTimeHalfway(double scoreTime) {
-    return Commands.deadline(
-        Commands.waitSeconds(scoreTime),
-        Commands.sequence(
-            // superstructure.overrideTarget(TargetType.),
-            hubScoringState(),
-            Commands.waitSeconds(2),
-            Commands.parallel(
-                Commands.run(() -> IntakeRollerSubsystem.getInstance().runIntake()),
-                Commands.repeatingSequence(
-                    intakePivot.setCommand(IntakePosition.HALFWAY_POSITION),
-                    Commands.waitSeconds(0.5),
-                    intakePivot.setCommand(IntakePosition.HALFWAY_POSITION),
-                    Commands.waitSeconds(0.5)))));
-  }
-
-  // CORRECT: no actuating the intake
+  // VERIFIED: no actuating the intake
   public Command simpleScore(TargetType target, double scoreTime) {
     return Commands.sequence(
             // setup -> state & spin up shooter
@@ -235,11 +282,13 @@ public class AutoFactory {
                         Commands.sequence(
                             Commands.waitSeconds(1),
                             Commands.waitUntil(
-                                    () -> shooter.isAtGoalVelocity(RotationsPerSecond.of(5)))
-                                .withTimeout(2)),
+                            () -> shooter.isAtGoalVelocity(RotationsPerSecond.of(5)))
+                            .withTimeout(2)),
                         feeder.runAtVelocityCommand(RotationsPerSecond.of(85))),
                     // shooting
-                    Commands.deadline(Commands.waitSeconds(scoreTime), firingCommand())),
+                    Commands.deadline(
+                        Commands.waitSeconds(scoreTime), 
+                        firingCommand())),
                 aimingDriveCommand(target)))
         .finallyDo(() -> superstructure.setCurrentState(SuperstructureState.TRENCH));
   }
@@ -249,7 +298,7 @@ public class AutoFactory {
     return Commands.deadline(
         simpleScore(target, scoreTime),
         Commands.sequence(
-            Commands.waitSeconds(scoreTime), // amount of pause time before actuating
+            Commands.waitSeconds(2), // amount of pause time before actuating
             Commands.parallel(
                 IntakeRollerSubsystem.getInstance().runIntakeCommand(),
                 Commands.repeatingSequence(
@@ -264,7 +313,7 @@ public class AutoFactory {
     return Commands.deadline(
         simpleScore(target, scoreTime),
         Commands.sequence(
-            Commands.waitSeconds(scoreTime), // amount of pause time before actuating
+            Commands.waitSeconds(2), // amount of pause time before actuating
             Commands.parallel(
                 IntakeRollerSubsystem.getInstance().runIntakeCommand(),
                 Commands.repeatingSequence(

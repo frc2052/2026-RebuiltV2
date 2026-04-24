@@ -5,19 +5,23 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.autos.AutoChooser;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
 
   private final RobotContainer robotContainer;
+  private final AutoChooser autoChooser;
 
   public Robot() {
     robotContainer = new RobotContainer();
     // Force load this when the robot starts so that it doesn't cause 3 second overruns.
     double initialize = FieldConstants.fieldWidth;
-  }
+    autoChooser = AutoChooser.create(robotContainer);
+ }
 
   @Override
   public void robotPeriodic() {
@@ -31,13 +35,20 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    autoChooser.update();
+  }
 
   @Override
   public void disabledExit() {}
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    Command auto = autoChooser.getAuto();
+    if(auto != null){
+      CommandScheduler.getInstance().schedule(auto);
+    }
+  }
 
   @Override
   public void autonomousPeriodic() {}
@@ -46,7 +57,8 @@ public class Robot extends TimedRobot {
   public void autonomousExit() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   @Override
   public void teleopPeriodic() {}
