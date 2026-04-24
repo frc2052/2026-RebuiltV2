@@ -16,8 +16,9 @@ public class FeedingShootingTable extends ShootingTableBase {
   static {
     Map<Distance, Pair<AngularVelocity, Angle>> shootingTable = new HashMap<>();
     // Initialize the shooting table with distance, shooter velocity, and hood angle pairs
-    shootingTable.put(Meters.of(3.2), new Pair<>(RotationsPerSecond.of(28), Degrees.of(12)));
-    shootingTable.put(Meters.of(6.6), new Pair<>(RotationsPerSecond.of(47), Degrees.of(18)));
+    shootingTable.put(Meters.of(3.2), new Pair<>(RotationsPerSecond.of(21), Degrees.of(30)));
+    shootingTable.put(Meters.of(6.6), new Pair<>(RotationsPerSecond.of(37), Degrees.of(30)));
+    shootingTable.put(Meters.of(9.6), new Pair<>(RotationsPerSecond.of(45), Degrees.of(30)));
     // Add more entries as needed
     INSTANCE = new FeedingShootingTable(shootingTable);
   }

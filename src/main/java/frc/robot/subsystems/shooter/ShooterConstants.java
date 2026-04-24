@@ -12,7 +12,7 @@ import frc.robot.util.Ports;
 
 public final class ShooterConstants {
   public static final RollerSubsystemConstants ROLLER_CONFIG = new RollerSubsystemConstants();
-  public static final AngularVelocity IDLE_VELOCITY = RotationsPerSecond.of(40);
+  public static final AngularVelocity IDLE_VELOCITY = RotationsPerSecond.of(30);
 
   public static final double BANG_BANG_SPEED = 1;
 
@@ -40,18 +40,18 @@ public final class ShooterConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    ROLLER_CONFIG.slot0kP = 7.5; // 9
-    ROLLER_CONFIG.slot0kI = 5;
-    ROLLER_CONFIG.slot0kD = 0.1; // 0.12
-    ROLLER_CONFIG.slot0kS = 4.1;
-    ROLLER_CONFIG.slot0kV = 0.16; // 0.16
-    ROLLER_CONFIG.slot0kA = 0;
+    ROLLER_CONFIG.slot0kP = 7.5; // 7.5
+    ROLLER_CONFIG.slot0kI = 0; // 5
+    ROLLER_CONFIG.slot0kD = 0; // 0.1
+    ROLLER_CONFIG.slot0kS = 4.1; // 4.1
+    ROLLER_CONFIG.slot0kV = 0; // 0.16
+    ROLLER_CONFIG.slot0kA = 0.0; // 0
 
-    ROLLER_CONFIG.slot1kP = 0;
+    ROLLER_CONFIG.slot1kP = 10;
     ROLLER_CONFIG.slot1kI = 0;
     ROLLER_CONFIG.slot1kD = 0;
-    ROLLER_CONFIG.slot1kS = 0;
-    ROLLER_CONFIG.slot1kV = 0;
+    ROLLER_CONFIG.slot1kS = 4.1;
+    ROLLER_CONFIG.slot1kV = 0; // 0.8
     ROLLER_CONFIG.slot1kA = 0;
 
     ROLLER_CONFIG.motionMagicAcceleration = 50;

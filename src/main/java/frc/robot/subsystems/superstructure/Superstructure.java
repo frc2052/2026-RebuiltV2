@@ -2,11 +2,14 @@ package frc.robot.subsystems.superstructure;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.team2052.lib.geometry.Vector2d;
 import com.team2052.lib.regions.Region;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +27,8 @@ import frc.robot.util.FieldConstants;
 import frc.robot.util.MatchState;
 import frc.robot.util.ShootingCalculator;
 import frc.robot.util.ShotProfile;
+import frc.robot.util.ShotProfile.AimingParameters;
+import frc.robot.util.ShotProfile.ShotInformation;
 import frc.robot.util.ShotProfile.TargetParameters;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,7 +67,13 @@ public class Superstructure extends SubsystemBase {
     return INSTANCE;
   }
 
-  private Superstructure() {}
+  private Superstructure() {
+    lastCalculatedProfile =
+        new ShotProfile(
+            new AimingParameters(RotationsPerSecond.of(0), Degrees.of(0), Rotation2d.kZero),
+            new TargetParameters(new Translation2d(), TargetType.HUB),
+            new ShotInformation(isShootOnTheMove, new Vector2d(0, 0), Seconds.of(0)));
+  }
 
   /** Pushes the current state and shooting parameters to the hood and shooter subsystems. */
   public void pushToSubsystems() {
@@ -73,15 +84,15 @@ public class Superstructure extends SubsystemBase {
         break;
       case SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalVelocityTorque(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalPoint(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case OVERRIDE_SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalVelocityTorque(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalPoint(lastCalculatedProfile.aimingParameters.shooterVelocity);
         break;
       case MANUAL:
         hood.set(manualShootingParameters.getSecond());
-        shooter.setGoalVelocityTorque(manualShootingParameters.getFirst());
+        shooter.setGoalPoint(manualShootingParameters.getFirst());
         break;
       case TRENCH:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);
@@ -144,6 +155,9 @@ public class Superstructure extends SubsystemBase {
       //         + lastCalculatedProfile.aimingParameters.shooterVelocity.in(RotationsPerSecond));
       pushToSubsystems();
     }
+
+    SmartDashboard.putNumber(
+        "Target Rotation", lastCalculatedProfile.aimingParameters.robotRotation.getDegrees() + 180);
   }
 
   /**

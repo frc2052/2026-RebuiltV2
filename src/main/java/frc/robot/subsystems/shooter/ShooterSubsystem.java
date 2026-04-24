@@ -57,9 +57,10 @@ public class ShooterSubsystem extends RollerSubsystem {
 
     //   lastGoal = goalPoint;
     // }
-
-    // ATTENTION. IF WE ARE NOT RUNNING THE SHOOTER IT WILL RETURN HERE!!!!!!!!!!
-    if (goalPoint.in(RotationsPerSecond) == 0) return;
+    if (goalPoint.in(RotationsPerSecond) == 0) {
+      setCoastOut();
+    }
+    ;
     setGoalVelocityMotionMagic(goalPoint);
 
     // if ( // running open loop and within bounds
