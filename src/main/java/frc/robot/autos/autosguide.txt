@@ -11,6 +11,6 @@ When you want to make a new auto:
 5. Yay, now you've made a full auto!
 
 Notes for Afomia
-- make / carry over all the paths & comment out the order of events
-- actually write all Autos
-- verify state / scoring logic
+- FIRST - make sure all the configs are right. COF
+- carry over all the paths in ChorPaths
+- actuall write all the autos in AutoFactory.java

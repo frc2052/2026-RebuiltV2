@@ -1,5 +1,10 @@
 package frc.robot.autos;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -14,27 +19,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.FiringCommand;
+import frc.robot.commands.drive.AimingDriveCommand;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
 import frc.robot.subsystems.feeder.FeederSubsystem;
 import frc.robot.subsystems.floor.FloorSubsystem;
 import frc.robot.subsystems.hood.HoodConstants;
 import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem;
-import frc.robot.subsystems.intake.IntakeRollerSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem.IntakePosition;
+import frc.robot.subsystems.intake.IntakeRollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.subsystems.vision.VisionSubsystem;
-
+import java.util.Optional;
 import java.util.Set;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FlippingUtil;
 
 // spotless: off
 public class AutoFactory {
@@ -48,7 +50,7 @@ public class AutoFactory {
       new LoggedDashboardChooser<Boolean>(
           "Auto Sprint Mode Chooser", new SendableChooser<Boolean>());
 
-    public AutoFactory() {
+  public AutoFactory() {
     sprintChooser.addDefaultOption("NO SPRINT", Boolean.FALSE);
     sprintChooser.addOption("SPRINT", Boolean.TRUE);
 
@@ -76,73 +78,53 @@ public class AutoFactory {
     }
   }
 
-// -------------------------------- ACTUAL AUTOS -------------------------------- //
+  // -------------------------------- ACTUAL AUTOS -------------------------------- //
 
-    Pair<Pose2d, Command> noAuto() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> noAuto() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> preloadOnlyLeft() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> preloadOnlyLeft() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> preloadOnlyRight() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> preloadOnlyRight() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> preloadOnlyCenter() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> preloadOnlyCenter() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-// LEFT AUTOS
+  // LEFT AUTOS
 
-    Pair<Pose2d, Command> leftSingleTrenchSweep() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> leftSingleTrenchSweep() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> leftDoubleSweep() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> leftDoubleSweep() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-// RIGHT AUTOS
-    Pair<Pose2d, Command> rightSingleTrenchSweep() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  // RIGHT AUTOS
+  Pair<Pose2d, Command> rightSingleTrenchSweep() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> rightDoubleSweep() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> rightDoubleSweep() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-// CENTER AUTOS
-    Pair<Pose2d, Command> centerOutpostDepot() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  // CENTER AUTOS
+  Pair<Pose2d, Command> centerOutpostDepot() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-    Pair<Pose2d, Command> centerDepotOutpost() {
-        return Pair.of(new Pose2d(), Commands.none());
-    }
+  Pair<Pose2d, Command> centerDepotOutpost() {
+    return Pair.of(new Pose2d(), Commands.none());
+  }
 
-// example from v1
-
-    //   Pair<Pose2d, Command> leftSweepTrench() {
-    //     return Pair.of(
-    //         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
-    //         // first cycle
-    //         Commands.sequence(
-    //             sprintOrScorePreload(),
-    //             postScoringCleanup(),
-    //             Commands.waitSeconds(0.2), // wait for hood & intake
-    //             Commands.deadline(
-    //                 Commands.sequence(
-    //                     IntakePivotCommandFactory.extend(),
-    //                     followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1),
-    //                     followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)),
-    //                 IntakeRollerCommandFactory.intake()),
-    //             scoreWithTimeHalfway(5.5),
-    //             postScoringCleanup()));
-    //   }
-
-// -------------------------------- FACTORY METHODS -------------------------------- //
+  // -------------------------------- FACTORY METHODS -------------------------------- //
   public final FloorSubsystem floor = FloorSubsystem.getInstance();
   public final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
   public final VisionSubsystem vision = VisionSubsystem.getInstance();
@@ -154,8 +136,8 @@ public class AutoFactory {
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
 
-// other
-public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
+  // other
+  public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
       return FlippingUtil.flipFieldPose(bluePose);
     } else {
@@ -169,7 +151,7 @@ public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
           if (sprintChooser.get().equals(Boolean.TRUE)) {
             return Commands.none();
           } else {
-            return simpleScoreWithTime(2);
+            return simpleScore(TargetType.HUB, 2);
           }
         },
         Set.of());
@@ -185,53 +167,49 @@ public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
         Set.of());
   }
 
-    public Command reserGyro(){
-        return Commands.runOnce(() -> drivetrain.seedFieldCentric());
-    }
+  public Command resetGyro() {
+    return Commands.runOnce(() -> drivetrain.seedFieldCentric());
+  }
 
-    public Command setState(SuperstructureState state){
-        return superstructure.setStateCommand(state);
-    }
+  public Command setState(SuperstructureState state) {
+    return superstructure.setStateCommand(state);
+  }
 
-// intaking
-    public Command intakeWithTime(double seconds){
-        return Commands.sequence(
-            intakePivot.setCommand(IntakePosition.OUT_POSITION),
-            intake.runIntakeCommand().withTimeout(seconds)
-        );
-    }
+  // intaking
+  public Command intakeWithTime(double seconds) {
+    return Commands.sequence(
+        intakePivot.setCommand(IntakePosition.OUT_POSITION),
+        intake.runIntakeCommand().withTimeout(seconds));
+  }
 
-    public Command indexAll(){
-        return Commands.runOnce(
-            () -> floor.scoreCommand()
-        );
-    }
+  public Command indexAll() {
+    return Commands.runOnce(() -> floor.scoreCommand());
+  }
 
-// shooting
+  // shooting
 
-    public Command postScoringCleanup(){
-        return Commands.sequence(
-            Commands.runOnce(() -> superstructure.getInstance().setCurrentState(SuperstructureState.TRENCH)),
-            Commands.runOnce(() -> intakePivot.setCommand(IntakePosition.OUT_POSITION))
-        );
-    }
+  public Command postScoringCleanup() {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> Superstructure.getInstance().setCurrentState(SuperstructureState.TRENCH)),
+        Commands.runOnce(() -> intakePivot.setCommand(IntakePosition.OUT_POSITION)));
+  }
 
-    public Command firingCommand(){
-        return new FiringCommand();
-    }
+  public Command firingCommand() {
+    return new FiringCommand();
+  }
 
-    // TODO: ?? do i override the target?
-    public Command hubScoringState(){
-        return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.SHOOTING));
-    }
+  public Command hubScoringState() {
+    return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.SHOOTING));
+  }
 
-    public Command trenchScoringState(){
-        return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.TRENCH));
-    }
+  public Command trenchScoringState() {
+    return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.TRENCH));
+  }
 
-    // TODO: do i just set to a scoring state? then run the intake or how do i do this
-    public Command socreWithTimeHalfway(double scoreTime){
-        return Commands.deadline(
+  // TODO: do i just set to a scoring state? then run the intake or how do i do this
+  public Command socreWithTimeHalfway(double scoreTime) {
+    return Commands.deadline(
         Commands.waitSeconds(scoreTime),
         Commands.sequence(
             // superstructure.overrideTarget(TargetType.),
@@ -243,41 +221,71 @@ public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
                     intakePivot.setCommand(IntakePosition.HALFWAY_POSITION),
                     Commands.waitSeconds(0.5),
                     intakePivot.setCommand(IntakePosition.HALFWAY_POSITION),
-                    Commands.waitSeconds(0.5))))); 
-    }
+                    Commands.waitSeconds(0.5)))));
+  }
 
-    public Command scoreWithTime(double scoreTime){
-        return Commands.deadline(
-        Commands.waitSeconds(scoreTime),
+  // CORRECT: no actuating the intake
+  public Command simpleScore(TargetType target, double scoreTime) {
+    return Commands.sequence(
+            // setup -> state & spin up shooter
+            superstructure.setStateCommand(SuperstructureState.SHOOTING),
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.deadline(
+                        Commands.sequence(
+                            Commands.waitSeconds(1),
+                            Commands.waitUntil(
+                                    () -> shooter.isAtGoalVelocity(RotationsPerSecond.of(5)))
+                                .withTimeout(2)),
+                        feeder.runAtVelocityCommand(RotationsPerSecond.of(85))),
+                    // shooting
+                    Commands.deadline(Commands.waitSeconds(scoreTime), firingCommand())),
+                aimingDriveCommand(target)))
+        .finallyDo(() -> superstructure.setCurrentState(SuperstructureState.TRENCH));
+  }
+
+  // actuates intake
+  public Command scoreWhileActuating(TargetType target, double scoreTime) {
+    return Commands.deadline(
+        simpleScore(target, scoreTime),
         Commands.sequence(
-            // superstructure.overrideTarget(TargetType.),
-            hubScoringState(),
-            Commands.waitSeconds(2),
+            Commands.waitSeconds(scoreTime), // amount of pause time before actuating
             Commands.parallel(
-                Commands.run(() -> IntakeRollerSubsystem.getInstance().runIntake()),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand(),
                 Commands.repeatingSequence(
-                    intakePivot.setCommand(IntakePosition.IN_POSITION),
+                    IntakePivotSubsystem.getInstance().setCommand(IntakePosition.IN_POSITION),
                     Commands.waitSeconds(0.5),
-                    intakePivot.setCommand(IntakePosition.IN_POSITION),
-                    Commands.waitSeconds(0.5))))); 
-    }
+                    IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+                    Commands.waitSeconds(0.5)))));
+  }
 
-    public Command simpleScoreWithTime(double scoreTime){
-      return Commands.deadline(
-            Commands.waitSeconds(scoreTime),
-            Commands.sequence(
-                hubScoringState(),
-                Commands.waitSeconds(0.5)))
-        .finallyDo(() -> postScoringCleanup());
-    }
+  // actuates intake
+  public Command scoreWhileActuatingHalfway(TargetType target, double scoreTime) {
+    return Commands.deadline(
+        simpleScore(target, scoreTime),
+        Commands.sequence(
+            Commands.waitSeconds(scoreTime), // amount of pause time before actuating
+            Commands.parallel(
+                IntakeRollerSubsystem.getInstance().runIntakeCommand(),
+                Commands.repeatingSequence(
+                    IntakePivotSubsystem.getInstance().setCommand(IntakePosition.HALFWAY_POSITION),
+                    Commands.waitSeconds(0.5),
+                    IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+                    Commands.waitSeconds(0.5)))));
+  }
 
-// hood
-    public Command forceHoodDown(){
-        return Commands.runOnce(() -> hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
-    }
+  public Command aimingDriveCommand(TargetType type) {
+    return new AimingDriveCommand(
+        () -> 0, () -> 0, () -> 0, () -> true, () -> false, () -> false, Optional.of(type));
+  }
 
-// following / paths
- public Command followPathCommand(ChorPaths chorPath) {
+  // hood
+  public Command forceHoodDown() {
+    return Commands.runOnce(() -> hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
+  }
+
+  // following / paths
+  public Command followPathCommand(ChorPaths chorPath) {
     Tracer tracer = new Tracer();
     // go from a ChorPath String to a PathPlannerPath
     try {
@@ -341,6 +349,5 @@ public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
       return new Pose2d();
     }
   }
-
 }
 // spotless: on
