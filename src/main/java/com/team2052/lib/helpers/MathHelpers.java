@@ -1,10 +1,14 @@
 package com.team2052.lib.helpers;
 
+import static edu.wpi.first.units.Units.Radians;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
 
 public class MathHelpers {
   public static final Pose2d POSE_2D_ZERO = new Pose2d();
@@ -101,5 +105,19 @@ public class MathHelpers {
     if (inverse < 0) inverse += originalModulus;
 
     return inverse;
+  }
+
+  public static boolean angleEpsilonEquals(Angle angle1, Angle angle2, Angle epsilon) {
+    // pi to -pi
+    double angle1Rads = MathUtil.angleModulus(angle1.in(Radians));
+    double angle2Rads = MathUtil.angleModulus(angle2.in(Radians));
+
+    double difference0 = Math.abs(angle1Rads - angle2Rads);
+    double difference1 = Math.abs(angle1Rads - angle2Rads + 2 * Math.PI);
+    double difference2 = Math.abs(angle1Rads - angle2Rads - 2 * Math.PI);
+
+    return (difference0 <= epsilon.in(Radians)
+        || difference1 <= epsilon.in(Radians)
+        || difference2 <= epsilon.in(Radians));
   }
 }

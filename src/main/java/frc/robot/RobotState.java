@@ -59,6 +59,7 @@ public class RobotState {
     field2d.setRobotPose(drivetrainState.Pose);
     autoField.setRobotPose(autoStartPose);
     SmartDashboard.putNumber(
-        "Robot Rotation", MathUtil.angleModulus(drivetrainState.Pose.getRotation().getDegrees()));
+        "Robot Rotation",
+        Math.toDegrees(MathUtil.angleModulus(drivetrainState.Pose.getRotation().getRadians())));
   }
 }

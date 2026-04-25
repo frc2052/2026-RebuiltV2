@@ -123,14 +123,18 @@ public class RobotContainer {
     translationJoystick
         .frontTrigger()
         .whileTrue(intake.runIntakeCommand())
-        .onTrue(intakePivot.setCommand(IntakePosition.DEPOT_POSITION));
+        .onTrue(
+            Commands.either(
+                intakePivot.setCommand(IntakePosition.DEPOT_POSITION),
+                intakePivot.setCommand(IntakePosition.OUT_POSITION),
+                translationJoystick.rightThumbButton()));
+
+    // fire command
+    translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
 
     rotationJoystick
         .frontTrigger()
         .onTrue(superstructure.setStateCommand(SuperstructureState.TRENCH));
-
-    // fire command
-    translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
 
     // override target to depot feeding
     rotationJoystick
@@ -163,6 +167,142 @@ public class RobotContainer {
                     () -> false, // lock wheels
                     Optional.of(TargetType.OUTPOST_FEEDING))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    rotationJoystick
+        .middleThumbButton()
+        .whileTrue(
+            Commands.sequence(
+                superstructure.setStateCommand(SuperstructureState.SHOOTING),
+                Commands.parallel(
+                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                    new AimingDriveCommand(
+                        translationJoystick::getY,
+                        translationJoystick::getX,
+                        rotationJoystick::getX,
+                        () -> true, // field centric
+                        () ->
+                            !superstructure
+                                .getCurrentFieldRegion()
+                                .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
+                        () ->
+                            MathHelpers.angleEpsilonEquals(
+                                    superstructure
+                                        .getLastCalculatedProfile()
+                                        .aimingParameters
+                                        .robotRotation
+                                        .getMeasure()
+                                        .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+                                    RobotState.getInstance()
+                                        .getFieldToRobot()
+                                        .getRotation()
+                                        .getMeasure(),
+                                    Degrees.of(3))
+                                && superstructure
+                                    .getCurrentFieldRegion()
+                                    .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
+                        Optional.empty() // default target type
+                        ))))
+        .whileTrue(
+            Commands.sequence(
+                Commands.waitSeconds(0.5),
+                Commands.waitUntil(
+                    () ->
+                        (shooter.isAtGoalVelocity(
+                                RotationsPerSecond.of(
+                                    superstructure
+                                            .getCurrentFieldRegion()
+                                            .equals(FieldRegion.ALLIANCE_ZONE)
+                                        ? 1
+                                        : 5))
+                            && MathHelpers.angleEpsilonEquals(
+                                superstructure
+                                    .getLastCalculatedProfile()
+                                    .aimingParameters
+                                    .robotRotation
+                                    .getMeasure()
+                                    .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+                                RobotState.getInstance()
+                                    .getFieldToRobot()
+                                    .getRotation()
+                                    .getMeasure(),
+                                Degrees.of(3)))), // .withTimeout(2),
+                Commands.waitSeconds(0.2),
+                new FiringCommand()))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    translationJoystick
+        .leftThumbButton()
+        .whileTrue(
+            Commands.parallel(
+                intake.runOuttakeCommand(),
+                floor.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                stager.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+                intakePivot.setCommand(IntakePosition.OUT_POSITION)));
+
+    // aim to default target
+
+    // ---- SECONDARY PANEL CONTROLS ----
+
+    // side buttons
+    secondaryPanel.button(2).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
+    Trigger halfwayIntake = new Trigger(() -> secondaryPanel.getX() < 0.5);
+    halfwayIntake.onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
+    Trigger intakeDown = new Trigger(() -> secondaryPanel.getX() > 0.5);
+    intakeDown.onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+
+    // stow intake
+    secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
+
+    // halfway intake
+    secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
+
+    // intake out
+    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+    // set hood to min angle
+    secondaryPanel.button(10).onFalse(hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
+
+    // set hood to max angle
+    secondaryPanel.button(1).onFalse(hood.setCommand((HoodConstants.HOOD_MAX_ANGLE)));
+
+    // set hood to halfway degrees
+    secondaryPanel.button(6).onFalse(hood.setCommand(Degrees.of(15)));
+
+    secondaryPanel
+        .button(3)
+        .onFalse(Commands.runOnce(() -> superstructure.increaseBrownoutBoost()));
+    secondaryPanel
+        .button(4)
+        .onFalse(Commands.runOnce(() -> superstructure.decreaseBrownoutBoost()));
+  }
+
+  private void configureTestBindings() {
+    /*  How to run these tests WITHOUT having logger:
+     * 1. make sure this method is called instead of configureMatchBindings() in the constructor
+     * 2. setup the hood first cause otherwise it will try to go to the min angle and if thats not setup it will break.
+     * 3. note that nothing should run on enable, so you can test everything individually before switching to the match bindings
+     * 4. check all the button bindings cause I put some of them (mostly secondary panel ones) on random numbers cause IDK which to use.
+     * 5. Just follow what each thing says to do, you'll be fine. Text me if you don't know how anything works.
+     */
+
+    // DRIVETRAIN TESTS
+
+    // reset gyro
+    translationJoystick
+        .rightBaseBottomLeft()
+        .onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+    // drive command
+    drivetrain.setDefaultCommand(
+        new DefaultDriveCommand(
+            translationJoystick::getY,
+            translationJoystick::getX,
+            rotationJoystick::getX,
+            () -> true));
+    translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
+    rotationJoystick
+        .frontTrigger()
+        .onTrue(feeder.runAtVelocityCommand(RotationsPerSecond.of(85)))
+        .onFalse(feeder.runAtVelocityCommand(RotationsPerSecond.of(0)));
 
     rotationJoystick
         .middleThumbButton()
@@ -223,97 +363,6 @@ public class RobotContainer {
                 Commands.waitSeconds(0.2),
                 new FiringCommand()))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
-
-    translationJoystick
-        .leftThumbButton()
-        .whileTrue(
-            Commands.parallel(
-                intake.runOuttakeCommand(),
-                floor.runAtVelocityCommand(RotationsPerSecond.of(-50)),
-                stager.runAtVelocityCommand(RotationsPerSecond.of(-50)),
-                feeder.runAtVelocityCommand(RotationsPerSecond.of(-50)),
-                intakePivot.setCommand(IntakePosition.OUT_POSITION)));
-
-    // aim to default target
-
-    // ---- SECONDARY PANEL CONTROLS ----
-
-    // side buttons
-    secondaryPanel.button(2).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
-    Trigger halfwayIntake = new Trigger(() -> secondaryPanel.getX() < 0.5);
-    halfwayIntake.onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
-    Trigger intakeDown = new Trigger(() -> secondaryPanel.getX() > 0.5);
-    intakeDown.onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
-
-    // stow intake
-    secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
-
-    // halfway intake
-    secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
-
-    // intake out
-    secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
-    // set hood to min angle
-    secondaryPanel.button(10).onFalse(hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
-
-    // set hood to max angle
-    secondaryPanel.button(1).onFalse(hood.setCommand((HoodConstants.HOOD_MAX_ANGLE)));
-
-    // set hood to halfway degrees
-    secondaryPanel.button(6).onFalse(hood.setCommand(Degrees.of(15)));
-  }
-
-  private void configureTestBindings() {
-    /*  How to run these tests WITHOUT having logger:
-     * 1. make sure this method is called instead of configureMatchBindings() in the constructor
-     * 2. setup the hood first cause otherwise it will try to go to the min angle and if thats not setup it will break.
-     * 3. note that nothing should run on enable, so you can test everything individually before switching to the match bindings
-     * 4. check all the button bindings cause I put some of them (mostly secondary panel ones) on random numbers cause IDK which to use.
-     * 5. Just follow what each thing says to do, you'll be fine. Text me if you don't know how anything works.
-     */
-
-    // DRIVETRAIN TESTS
-
-    // reset gyro
-    translationJoystick
-        .rightBaseBottomLeft()
-        .onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
-    // drive command
-    drivetrain.setDefaultCommand(
-        new DefaultDriveCommand(
-            translationJoystick::getY,
-            translationJoystick::getX,
-            rotationJoystick::getX,
-            () -> true));
-    translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
-    rotationJoystick
-        .frontTrigger()
-        .onTrue(feeder.runAtVelocityCommand(RotationsPerSecond.of(85)))
-        .onFalse(feeder.runAtVelocityCommand(RotationsPerSecond.of(0)));
-    rotationJoystick
-        .middleThumbButton()
-        .whileTrue(
-            Commands.sequence(
-                superstructure.setStateCommand(SuperstructureState.SHOOTING),
-                Commands.parallel(
-                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
-                    new AimingDriveCommand(
-                        translationJoystick::getY,
-                        translationJoystick::getX,
-                        rotationJoystick::getX,
-                        () -> true, // field centric
-                        () -> false, // use SOTM
-                        () -> translationJoystick.middleThumbButton().getAsBoolean(), // lock wheels
-                        Optional.empty() // default target type
-                        ))))
-        .whileTrue(
-            Commands.sequence(
-                Commands.waitSeconds(0.5),
-                Commands.deadline(
-                    Commands.waitUntil(
-                        () ->
-                            shooter.isAtGoalVelocity(RotationsPerSecond.of(5))), // .withTimeout(2),
-                    new FiringCommand())));
     translationJoystick
         .frontTrigger()
         .whileTrue(intake.runIntakeCommand())
@@ -340,13 +389,16 @@ public class RobotContainer {
         .button(3)
         .onFalse(
             Commands.runOnce(
-                () -> shooter.setGoalPoint(shooter.getGoalPoint().plus(RotationsPerSecond.of(1)))));
+                () ->
+                    shooter.setGoalPoint(
+                        shooter.getGoalPoint().plus(RotationsPerSecond.of(0.25)))));
     secondaryPanel
         .button(4)
         .onFalse(
             Commands.runOnce(
                 () ->
-                    shooter.setGoalPoint(shooter.getGoalPoint().minus(RotationsPerSecond.of(1)))));
+                    shooter.setGoalPoint(
+                        shooter.getGoalPoint().minus(RotationsPerSecond.of(0.25)))));
 
     // // print out the current shot profile
     secondaryPanel

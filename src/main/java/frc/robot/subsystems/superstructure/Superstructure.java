@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.team2052.lib.geometry.Vector2d;
 import com.team2052.lib.regions.Region;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -52,6 +53,8 @@ public class Superstructure extends SubsystemBase {
   @Getter @Setter private boolean hasCalculatedShotProfileThisPeriod = false;
 
   @Getter @Setter private boolean isShootOnTheMove = SuperstructureConstants.DEFAULT_IS_SOTM;
+
+  @Getter @Setter private AngularVelocity brownoutBoost = RotationsPerSecond.of(0);
 
   private static Superstructure INSTANCE;
 
@@ -118,6 +121,14 @@ public class Superstructure extends SubsystemBase {
     return new InstantCommand(() -> overrideTarget(newTarget));
   }
 
+  public void increaseBrownoutBoost() {
+    brownoutBoost = brownoutBoost.plus(RotationsPerSecond.of(0.5));
+  }
+
+  public void decreaseBrownoutBoost() {
+    brownoutBoost = brownoutBoost.minus(RotationsPerSecond.of(0.5));
+  }
+
   /**
    * Set the manual shooting parameters for the shooter and hood.
    *
@@ -155,9 +166,12 @@ public class Superstructure extends SubsystemBase {
       //         + lastCalculatedProfile.aimingParameters.shooterVelocity.in(RotationsPerSecond));
       pushToSubsystems();
     }
-
+    SmartDashboard.putNumber("Brownout Boost", brownoutBoost.in(RotationsPerSecond));
     SmartDashboard.putNumber(
-        "Target Rotation", lastCalculatedProfile.aimingParameters.robotRotation.getDegrees() + 180);
+        "Target Rotation",
+        Math.toDegrees(
+            MathUtil.angleModulus(
+                lastCalculatedProfile.aimingParameters.robotRotation.getRadians())));
   }
 
   /**
@@ -257,7 +271,7 @@ public class Superstructure extends SubsystemBase {
      */
     OUTPOST_FEEDING(
         FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT,
-        FieldConstants.FieldLocations.RED_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT,
+        FieldConstants.FieldLocations.BLUE_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT,
         FeedingShootingTable.getInstance(),
         FeedingTimeTable.getInstance(),
         true);

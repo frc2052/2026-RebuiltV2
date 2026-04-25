@@ -59,8 +59,11 @@ public class ShootingCalculator {
         targetParameters.targetType.getShootingTable().getShootingParameters(distanceToTarget);
 
     Rotation2d rotationToTarget =
-        targetParameters.targetPosition.minus(robotPose.getTranslation()).getAngle();
-    // .plus(Rotation2d.k180deg);
+        targetParameters
+            .targetPosition
+            .minus(robotPose.getTranslation())
+            .getAngle()
+            .plus(MatchState.isRedAlliance() ? Rotation2d.kZero : Rotation2d.k180deg);
     AimingParameters aimingParameters =
         new AimingParameters(
             shootingParameters.getFirst(), shootingParameters.getSecond(), rotationToTarget);
@@ -75,6 +78,7 @@ public class ShootingCalculator {
 
   private static ShotProfile calculateSOTMShotProfile(
       TargetParameters targetParameters, Vector2d robotVelocity, boolean isSOTM) {
+    System.out.println("SOTM");
     Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
 
     if (targetParameters.targetType.isFeeding()) {
@@ -104,7 +108,7 @@ public class ShootingCalculator {
             .targetPosition
             .minus(adjustedRobotPose.getTranslation())
             .getAngle()
-            .plus(Rotation2d.k180deg);
+            .plus(MatchState.isRedAlliance() ? Rotation2d.kZero : Rotation2d.k180deg);
     AimingParameters aimingParameters =
         new AimingParameters(
             shootingParameters.getFirst(), shootingParameters.getSecond(), rotationToTarget);

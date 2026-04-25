@@ -44,12 +44,12 @@ public class VisionConstants {
 
   public static class LeftLimelightConstants {
     public static final String CAMERA_NAME = "limelight-left";
-    public static final Distance X_OFFSET = Inches.of(-12.86588);
-    public static final Distance Y_OFFSET = Inches.of(4.5);
-    public static final Distance Z_OFFSET = Inches.of(12.527);
+    public static final Distance X_OFFSET = Inches.of(5.0208);
+    public static final Distance Y_OFFSET = Inches.of(-13.612018);
+    public static final Distance Z_OFFSET = Inches.of(12.251);
     public static final Angle THETA_X_OFFSET = Degrees.of(0);
     public static final Angle THETA_Y_OFFSET = Degrees.of(0);
-    public static final Angle THETA_Z_OFFSET = Degrees.of(180);
+    public static final Angle THETA_Z_OFFSET = Degrees.of(90);
     public static final double[] LIMELIGHT_POSE = {
       X_OFFSET.in(Meters),
       Y_OFFSET.in(Meters),
@@ -63,12 +63,12 @@ public class VisionConstants {
 
   public static class RightLimelightConstants {
     public static final String CAMERA_NAME = "limelight-right";
-    public static final Distance X_OFFSET = Inches.of(-12.86588);
-    public static final Distance Y_OFFSET = Inches.of(4.5);
-    public static final Distance Z_OFFSET = Inches.of(12.527);
+    public static final Distance X_OFFSET = Inches.of(5.0208);
+    public static final Distance Y_OFFSET = Inches.of(13.612018);
+    public static final Distance Z_OFFSET = Inches.of(12.521);
     public static final Angle THETA_X_OFFSET = Degrees.of(0);
     public static final Angle THETA_Y_OFFSET = Degrees.of(0);
-    public static final Angle THETA_Z_OFFSET = Degrees.of(180);
+    public static final Angle THETA_Z_OFFSET = Degrees.of(270);
     public static final double[] LIMELIGHT_POSE = {
       X_OFFSET.in(Meters),
       Y_OFFSET.in(Meters),

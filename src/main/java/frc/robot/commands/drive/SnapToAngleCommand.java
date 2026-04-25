@@ -31,7 +31,7 @@ public class SnapToAngleCommand extends DefaultDriveCommand {
     super(xSupplier, ySupplier, rotationSupplier, fieldCentricSupplier);
     this.desiredDirectionSupplier = desiredDirectionSupplier;
 
-    drive.HeadingController.setPID(5.0, 0, 0);
+    drive.HeadingController.setPID(6.0, 0, 0);
     drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     drive.HeadingController.setTolerance(DrivetrainConstants.HEADING_TOLERANCE.in(Radians));
   }

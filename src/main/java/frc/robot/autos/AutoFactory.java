@@ -393,7 +393,7 @@ public class AutoFactory {
     return Commands.sequence(
         Commands.runOnce(
             () -> Superstructure.getInstance().setCurrentState(SuperstructureState.TRENCH)),
-        Commands.runOnce(() -> intakePivot.setCommand(IntakePosition.OUT_POSITION)));
+        IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION));
   }
 
   public Command firingCommand() {
@@ -430,7 +430,7 @@ public class AutoFactory {
                                             .getRotation()
                                             .getRadians()),
                                     Math.toRadians(3))))
-                    .withTimeout(3), // how much of a timeout?
+                    .withTimeout(1), // how much of a timeout?
                 Commands.deadline(Commands.waitSeconds(scoreTime), new FiringCommand())),
             // state; feeder; aiming drive command
             Commands.sequence(
@@ -498,7 +498,7 @@ public class AutoFactory {
     return Commands.deadline(
         simpleScore(target, scoreTime),
         Commands.parallel(
-            IntakeRollerSubsystem.getInstance().runIntakeCommand(),
+            // IntakeRollerSubsystem.getInstance().runIntakeCommand(),
             Commands.sequence(
                 Commands.waitSeconds(2),
                 IntakePivotSubsystem.getInstance().setCommand(IntakePosition.HALFWAY_POSITION))));
