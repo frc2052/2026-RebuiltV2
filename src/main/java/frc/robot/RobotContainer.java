@@ -52,6 +52,7 @@ public class RobotContainer {
   public final IntakePivotSubsystem intakePivot = IntakePivotSubsystem.getInstance();
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
+  //   public final LEDSubsystem leds = LEDSubsystem.getInstance();
 
   public final T16000MJoystick translationJoystick = new T16000MJoystick(0);
   public final T16000MJoystick rotationJoystick = new T16000MJoystick(1);

@@ -58,9 +58,19 @@ public class VisionSubsystem extends SubsystemBase {
         .getTable()
         .getEntry("camerapose_robotspace_set")
         .setDoubleArray(BackLimelightConstants.LIMELIGHT_POSE);
+    // LimelightCamera.LEFT
+    //     .getTable()
+    //     .getEntry("camerapose_robotspace_set")
+    //     .setDoubleArray(LeftLimelightConstants.LIMELIGHT_POSE);
+    // LimelightCamera.RIGHT
+    //     .getTable()
+    //     .getEntry("camerapose_robotspace_set")
+    //     .setDoubleArray(RightLimelightConstants.LIMELIGHT_POSE);
 
     // set double to 1 for enable, 0 to disable
     LimelightCamera.BACK.getTable().getEntry("rewind_enable_set").setDouble(0);
+    // LimelightCamera.LEFT.getTable().getEntry("rewind_enable_set").setDouble(0);
+    // LimelightCamera.RIGHT.getTable().getEntry("rewind_enable_set").setDouble(0);
   }
 
   @Override
@@ -73,7 +83,7 @@ public class VisionSubsystem extends SubsystemBase {
                   .addVisionMeasurement(
                       e.pose,
                       Utils.fpgaToCurrentTime(e.timestampSeconds),
-                      calculateStandardDeviation(e));
+                      calculateMT1StandardDeviation(e));
             });
     pushYaw(LimelightCamera.BACK);
 
@@ -157,8 +167,34 @@ public class VisionSubsystem extends SubsystemBase {
         });
   }
 
-  private Vector<N3> calculateStandardDeviation(PoseEstimate estimate) {
+  private Vector<N3> calculateMT1StandardDeviation(PoseEstimate estimate) {
 
+    OptionalDouble optStdDev =
+        Arrays.stream(estimate.rawFiducials).mapToDouble(fiducial -> fiducial.distToCamera).min();
+    double stdDev = optStdDev.isPresent() ? optStdDev.getAsDouble() : Double.MAX_VALUE;
+    double headingStdDev = Double.MAX_VALUE;
+
+    double closestTagDist = Double.MAX_VALUE;
+    for (RawFiducial fiducial : estimate.rawFiducials) {
+      if (fiducial.distToCamera < closestTagDist) {
+        closestTagDist = fiducial.distToCamera;
+      }
+    }
+    if (closestTagDist < 1) closestTagDist = 1;
+
+    double distanceToCurrentSTD = RobotState.getInstance().getFieldToRobot().getTranslation().getDistance(estimate.pose.getTranslation());
+
+    stdDev =
+        VisionConstants.CHASSIS_XY_STDDEV_COEFFICIENT
+                * Math.pow(closestTagDist, 2)
+                * distanceToCurrentSTD
+                / estimate.tagCount
+            + VisionConstants.DEFAULT_XY_STDDEV;
+
+    return VecBuilder.fill(stdDev, stdDev, headingStdDev);
+  }
+
+  private Vector<N3> calculateMT2StandardDeviations(PoseEstimate estimate) {
     OptionalDouble optStdDev =
         Arrays.stream(estimate.rawFiducials).mapToDouble(fiducial -> fiducial.distToCamera).min();
     double stdDev = optStdDev.isPresent() ? optStdDev.getAsDouble() : Double.MAX_VALUE;

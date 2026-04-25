@@ -47,7 +47,7 @@ public final class IntakeConstants {
     INTAKE_ROLLER_CONSTANTS.sensorToMechanismRatio = 1; // (30.0 / 12);
     INTAKE_ROLLER_CONSTANTS.statorCurrentLimit = Amps.of(80);
     INTAKE_ROLLER_CONSTANTS.enableStatorCurrentLimit = true;
-    INTAKE_ROLLER_CONSTANTS.supplyCurrentLimit = Amps.of(30);
+    INTAKE_ROLLER_CONSTANTS.supplyCurrentLimit = Amps.of(40);
     INTAKE_ROLLER_CONSTANTS.enableSupplyCurrentLimit = true;
   }
 
@@ -100,7 +100,8 @@ public final class IntakeConstants {
     INTAKE_SERVO_CONSTANTS.supplyCurrentLimit = Amps.of(20);
 
     INTAKE_SERVO_CONSTANTS.maxOutput = Volts.of(12.0);
-    INTAKE_SERVO_CONSTANTS.neutralMode = NeutralModeValue.Brake;
+    INTAKE_SERVO_CONSTANTS.neutralMode = NeutralModeValue.Coast;
+    INTAKE_SERVO_CONSTANTS.slot0kDeadband = (1 / 120.0);
 
     INTAKE_SERVO_CONSTANTS.sensorMode = FeedbackSensorSourceValue.FusedCANcoder;
 
