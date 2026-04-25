@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
+import com.team2052.lib.helpers.MathHelpers;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -12,12 +15,15 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.RobotState;
 import frc.robot.commands.FiringCommand;
 import frc.robot.commands.drive.AimingDriveCommand;
 import frc.robot.subsystems.drive.DrivetrainSubsystem;
@@ -31,6 +37,7 @@ import frc.robot.subsystems.intake.IntakeRollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure.FieldRegion;
 import frc.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -46,13 +53,20 @@ public class AutoFactory {
   static final DoublePublisher waitTimePublisher = waitTimeTopic.publish();
   static final DoubleSubscriber waitTimeSubscriber = waitTimeTopic.subscribe(0);
 
-  static final LoggedDashboardChooser sprintChooser =
-      new LoggedDashboardChooser<Boolean>(
-          "Auto Sprint Mode Chooser", new SendableChooser<Boolean>());
+  static final SendableChooser sprintChooser =
+      new SendableChooser<Boolean>();
+
+  static final SendableChooser returnChooser = 
+    new SendableChooser<Boolean>();
 
   public AutoFactory() {
-    sprintChooser.addDefaultOption("NO SPRINT", Boolean.FALSE);
+    sprintChooser.setDefaultOption("NO SPRINT", Boolean.FALSE);
     sprintChooser.addOption("SPRINT", Boolean.TRUE);
+
+    returnChooser.setDefaultOption("BUMP RETURN", Boolean.FALSE);
+    returnChooser.addOption("TRENCH RETURN", Boolean.TRUE);
+
+    waitTimeTopic.publish().accept(0);
 
     waitTimePublisher.set(0);
   }
@@ -88,6 +102,7 @@ public class AutoFactory {
     return Pair.of(
         getStartPose(ChorPaths.PRELOAD_ONLY_LEFT), 
         Commands.sequence(
+            followPathCommand(ChorPaths.PRELOAD_ONLY_LEFT),
             simpleScore(TargetType.HUB, 5),
             postScoringCleanup()
         ));
@@ -97,6 +112,7 @@ public class AutoFactory {
     return Pair.of(
         getStartPose(ChorPaths.PRELOAD_ONLY_RIGHT), 
         Commands.sequence(
+            followPathCommand(ChorPaths.PRELOAD_ONLY_RIGHT),
             simpleScore(TargetType.HUB, 5),
             postScoringCleanup()
         ));
@@ -118,7 +134,6 @@ public class AutoFactory {
     return Pair.of(
         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1), 
         Commands.sequence(
-            sprintOrScorePreload(),
             postScoringCleanup(),
             Commands.waitSeconds(0.2), // wait b4 going under trench
             Commands.deadline(
@@ -127,7 +142,7 @@ public class AutoFactory {
                     followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)
                 ), 
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            scoreWhileActuatingHalfway(TargetType.HUB, 5.5),
+            scoreWhileActuatingHalfway(TargetType.HUB, 3),
             postScoringCleanup()
         ));
   }
@@ -140,9 +155,10 @@ public class AutoFactory {
             Commands.deadline(
                 followPathCommand(ChorPaths.LTRENCH_HUB), 
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            // return to shoot
-            followPathCommand(ChorPaths.LNEUTRAL_LBUMP),
-            scoreWhileActuatingHalfway(TargetType.HUB, 5)
+            Commands.deadline(
+              followPathCommand(ChorPaths.LNEUTRAL_LBUMP), 
+              IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 3)
         ));
   }
 
@@ -151,7 +167,6 @@ public class AutoFactory {
     return Pair.of(
         getStartPose(ChorPaths.RTRENCH_RNEUTRAL1), 
         Commands.sequence(
-            sprintOrScorePreload(),
             postScoringCleanup(),
             Commands.waitSeconds(0.2), // wait b4 going under trench
             Commands.deadline(
@@ -160,7 +175,7 @@ public class AutoFactory {
                     followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)
                 ), 
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            scoreWhileActuatingHalfway(TargetType.HUB, 5.5),
+            scoreWhileActuatingHalfway(TargetType.HUB, 3),
             postScoringCleanup()
         ));
   }
@@ -173,20 +188,102 @@ public class AutoFactory {
             Commands.deadline(
                 followPathCommand(ChorPaths.RTRENCH_HUB), 
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            // reutrn to shoot
-            followPathCommand(ChorPaths.LNEUTRAL_LBUMP),
-            scoreWhileActuatingHalfway(TargetType.HUB, 5)
+            // return to shoot
+            Commands.deadline(
+                followPathCommand(ChorPaths.RNEUTRAL_RBUMP), 
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 3)
         ));
   }
 
-  // CENTER AUTOS
-  Pair<Pose2d, Command> centerOutpostDepot() {
-    return Pair.of(new Pose2d(), Commands.none());
+  // full sweeps (left & right)
+
+  Pair<Pose2d,Command> rightFullSweep(){
+    return Pair.of(
+      getStartPose(ChorPaths.RFULL_SWEEP1),
+      Commands.sequence(
+        followPathCommand(ChorPaths.RFULL_SWEEP1),
+        Commands.waitSeconds(getWaitSeconds()),
+        Commands.deadline(
+          followPathCommand(ChorPaths.RFULL_SWEEP2), 
+          IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+        returnTrenchOrBump(false),
+        simpleScore(TargetType.HUB, 4)
+      ));
+  }
+  // preload & depot
+
+  Pair<Pose2d, Command> Depot(){
+    return Pair.of(
+      getStartPose(ChorPaths.DEPOT_PICKUP),
+      Commands.sequence( 
+        Commands.deadline(
+          followPathCommand(ChorPaths.DEPOT_PICKUP),
+           IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+           followPathCommand(ChorPaths.DEPOT_SCORE),
+           simpleScore(TargetType.HUB, 2)
+          )
+  );
   }
 
-  Pair<Pose2d, Command> centerDepotOutpost() {
-    return Pair.of(new Pose2d(), Commands.none());
+  // grab value from text input to delay wait seconds
+  // Pair<Pose2d, Command> leftDelayBumpSwipe(){
+  //   return Pair.of(
+  //       getStartPose(ChorPaths.LBUMP_START), 
+  //       Commands.sequence(
+  //           followPathCommand(ChorPaths.LBUMP_START),
+  //           Commands.waitSeconds(getWaitSeconds()),
+  //           Commands.deadline(
+  //             followPathCommand(ChorPaths.MID_SWIPE),
+  //             IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+
+  //       ));
+  // }
+
+  Pair<Pose2d, Command> rightDelayBumpSwipe(){
+    return Pair.of(
+        getStartPose(ChorPaths.CENTER_BACKUP), 
+        Commands.sequence(
+            
+        ));
   }
+
+  Pair<Pose2d, Command> leftDelayTrenchSwipe(){
+    return Pair.of(
+        getStartPose(ChorPaths.LT_DELAY_SWIPE), 
+        Commands.sequence(
+        // wait for other team to pickup, then enter NZ
+            Commands.waitSeconds(3), 
+            Commands.deadline(
+              Commands.sequence(
+                followPathCommand(ChorPaths.LT_DELAY_SWIPE),
+                followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)
+              ),
+              IntakeRollerSubsystem.getInstance().runIntakeCommand()
+            ),
+            // score pickup
+            simpleScore(TargetType.HUB, 3)
+            // outpost?
+        ));
+  }
+
+  Pair<Pose2d, Command> rightDelayTrenchSwipe(){ 
+    return Pair.of(
+        getStartPose(ChorPaths.RT_DELAY_SWIPE), 
+        Commands.sequence(
+        // wait for other team to pickup, thene enter NZ    
+          Commands.waitSeconds(3),
+          Commands.deadline(
+            Commands.sequence(
+              followPathCommand(ChorPaths.RT_DELAY_SWIPE),
+              followPathCommand(ChorPaths.RNEUTRAL_RTRENCH)
+            ), 
+            IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+          // score pickup
+          simpleScore(TargetType.HUB, 3)
+        ));
+  }
+  
 
   // -------------------------------- FACTORY METHODS -------------------------------- //
   public final FloorSubsystem floor = FloorSubsystem.getInstance();
@@ -200,6 +297,11 @@ public class AutoFactory {
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
 
+  // wait seconds
+  public double getWaitSeconds(){
+    return waitTimeSubscriber.get();
+  }
+
   // other
   public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
@@ -209,10 +311,34 @@ public class AutoFactory {
     }
   }
 
+  public Command returnTrenchOrBump(boolean left){
+    return Commands.defer(
+      () -> {
+        if(returnChooser.getSelected().equals(Boolean.TRUE)){
+          if(left){
+            return followPathCommand(ChorPaths.LNEUTRAL_LTRENCH);
+            // left trench return
+          } else {
+            return followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1);
+            // right trench return
+          }
+        } else {
+          if(left){
+            return followPathCommand(ChorPaths.LNEUTRAL_LBUMP);
+            // left bump return
+          } else {
+            return followPathCommand(ChorPaths.RNEUTRAL_RBUMP);
+            // right bump return
+          }
+        }
+      }, 
+      Set.of());
+  }
+
   public Command sprintOrScorePreload() {
     return Commands.defer(
         () -> {
-          if (sprintChooser.get().equals(Boolean.TRUE)) {
+          if (sprintChooser.getSelected().equals(Boolean.TRUE)) {
             return Commands.none();
           } else {
             return simpleScore(TargetType.HUB, 2);
@@ -271,7 +397,43 @@ public class AutoFactory {
     return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.TRENCH));
   }
 
-  // VERIFIED: no actuating the intake
+  public Command RCsimpleScore(TargetType target, double scoreTime){
+    return Commands.deadline(
+      // checks for shooter to be at goal velocity; fire for scoreTime
+      Commands.sequence(
+        Commands.waitSeconds(0.5),
+        Commands.waitUntil(
+          () -> (shooter.isAtGoalVelocity(RotationsPerSecond.of(1))
+            && MathHelpers.epsilonEquals(
+                MathUtil.angleModulus(
+                    superstructure
+                            .getLastCalculatedProfile()
+                            .aimingParameters
+                            .robotRotation
+                            .getRadians()
+                        + Math.PI),
+                MathUtil.angleModulus(
+                    RobotState.getInstance()
+                        .getFieldToRobot()
+                        .getRotation()
+                        .getRadians()),
+                Math.toRadians(3)))
+        ).withTimeout(3), // how much of a timeout?
+        Commands.deadline(
+          Commands.waitSeconds(scoreTime), 
+          new FiringCommand())
+      ),
+      // state; feeder; aiming drive command
+      Commands.sequence(
+        superstructure.setStateCommand(SuperstructureState.SHOOTING),
+        Commands.parallel( // how to end?
+          feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+          aimingDriveCommand(target))
+      )
+    ).finallyDo(() -> superstructure.setCurrentState(SuperstructureState.TRENCH));
+  }
+
+  // confirmed score method, no actuation required
   public Command simpleScore(TargetType target, double scoreTime) {
     return Commands.sequence(
             // setup -> state & spin up shooter
@@ -298,7 +460,7 @@ public class AutoFactory {
     return Commands.deadline(
         simpleScore(target, scoreTime),
         Commands.sequence(
-            Commands.waitSeconds(2), // amount of pause time before actuating
+            // Commands.waitSeconds(2), // amount of pause time before actuating
             Commands.parallel(
                 IntakeRollerSubsystem.getInstance().runIntakeCommand(),
                 Commands.repeatingSequence(
@@ -309,11 +471,12 @@ public class AutoFactory {
   }
 
   // actuates intake
+  // TODO: test if we should keep the intake all the way up
   public Command scoreWhileActuatingHalfway(TargetType target, double scoreTime) {
     return Commands.deadline(
         simpleScore(target, scoreTime),
         Commands.sequence(
-            Commands.waitSeconds(2), // amount of pause time before actuating
+            // Commands.waitSeconds(2), // pause time b4 actuating: maybe no pause?
             Commands.parallel(
                 IntakeRollerSubsystem.getInstance().runIntakeCommand(),
                 Commands.repeatingSequence(

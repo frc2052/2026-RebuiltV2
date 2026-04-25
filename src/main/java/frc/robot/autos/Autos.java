@@ -14,16 +14,24 @@ public enum Autos {
   PRELOAD_ONLY_CENTER(AutoFactory::preloadOnlyCenter),
 
   // left
-  LEFT_SINGLE_SWEEP(AutoFactory::leftSingleTrenchSweep),
-  LEFT_DOUBLE_SWEEP(AutoFactory::leftDoubleSweep),
+  LEFT_SINGLE_SWEEP(AutoFactory::leftSingleTrenchSweep), 
+  LEFT_DOUBLE_SWEEP(AutoFactory::leftDoubleSweep), 
+  DEPOT(AutoFactory::Depot),
 
   // right
-  RIGHT_SINGLE_SWEEP(AutoFactory::rightSingleTrenchSweep),
-  RIGHT_DOUBLE_SWEEP(AutoFactory::rightDoubleSweep),
+  RIGHT_SINGLE_SWEEP(AutoFactory::rightSingleTrenchSweep), 
+  RIGHT_DOUBLE_SWEEP(AutoFactory::rightDoubleSweep), 
+  RIGHT_FULL_SWEEP(AutoFactory::rightFullSweep),
 
-  // center
-  CENTER_DEPOT_OUTPOST(AutoFactory::centerDepotOutpost),
-  CENTER_OUTPOST_DEPOT(AutoFactory::centerDepotOutpost);
+  // // other -> requires a unique method of usage
+  // RIGHT_PRELOAD_OUTPOST(AutoFactory::rightPreloadOutpost),
+  // LEFT_DELAY_BUMP_SWIPE(AutoFactory::leftDelayBumpSwipe),
+  // RIGHT_DELAY_BUMP_SWIPE_OUTPOST(AutoFactory::rightDelayBumpSwipeOutpost),
+
+  // // delayed trench swipe
+  LEFT_DELAY_TRENCH_SWIPE(AutoFactory::leftDelayTrenchSwipe),
+  RIGHT_DELAY_TRENCH_SWIPE(AutoFactory::rightDelayTrenchSwipe);
+
 
   public final Function<AutoFactory, Pair<Pose2d, Command>> command;
 

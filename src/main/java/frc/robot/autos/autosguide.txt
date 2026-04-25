@@ -10,7 +10,11 @@ When you want to make a new auto:
     - param1: reference to the AutoFactory method you created in step 3
 5. Yay, now you've made a full auto!
 
-Notes for Afomia
-- FIRST - make sure all the configs are right. COF
-- carry over all the paths in ChorPaths
-- actuall write all the autos in AutoFactory.java
+Autos ideas
+- being able to start @ different locations like on the bump for L / R
+
+- left & right double sweep
+- right preload & outpost auto
+- right delayed bump swipe + outpost auto
+- left & right delayed side swipe (into middle of field) + outpost auto 
+- quick over the bump, wait in front of hub & then sweep
