@@ -12,10 +12,11 @@ import lombok.Setter;
 
 public class RobotState {
   @Setter @Getter private SwerveDriveState drivetrainState = new SwerveDriveState();
-  @Setter @Getter private Pose2d autoStartPose;
+  @Setter @Getter private Pose2d autoStartPose = new Pose2d();
   @Setter @Getter private Pose2d chassisVisionFieldPose = new Pose2d();
   @Setter @Getter private boolean firstShiftOverride = false;
   Field2d field2d = new Field2d();
+  Field2d autoField = new Field2d();
 
   private static RobotState INSTANCE;
 
@@ -28,6 +29,7 @@ public class RobotState {
 
   private RobotState() {
     SmartDashboard.putData("Field", field2d);
+    SmartDashboard.putData("Auto Start", autoField);
   }
 
   public Pose2d getFieldToRobot() {
@@ -55,6 +57,7 @@ public class RobotState {
 
   public void output() {
     field2d.setRobotPose(drivetrainState.Pose);
+    autoField.setRobotPose(autoStartPose);
     SmartDashboard.putNumber(
         "Robot Rotation", MathUtil.angleModulus(drivetrainState.Pose.getRotation().getDegrees()));
   }

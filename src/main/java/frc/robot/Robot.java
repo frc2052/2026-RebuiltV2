@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
     // Force load this when the robot starts so that it doesn't cause 3 second overruns.
     double initialize = FieldConstants.fieldWidth;
     autoChooser = AutoChooser.create(robotContainer);
- }
+  }
 
   @Override
   public void robotPeriodic() {
@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Command auto = autoChooser.getAuto();
-    if(auto != null){
+    if (auto != null) {
       CommandScheduler.getInstance().schedule(auto);
     }
   }
@@ -57,8 +57,7 @@ public class Robot extends TimedRobot {
   public void autonomousExit() {}
 
   @Override
-  public void teleopInit() {
-  }
+  public void teleopInit() {}
 
   @Override
   public void teleopPeriodic() {}

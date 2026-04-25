@@ -4,7 +4,7 @@
 
 package frc.robot.autos;
 
-import com.pathplanner.lib.util.FlippingUtil;
+import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -69,7 +69,7 @@ public class AutoChooser {
       // preview start pose in AdvantageScope while disabled
       Pose2d currentStartPose = currentAuto.getFirst();
       if (currentStartPose != null) {
-        RobotState.getInstance().setAutoStartPose(currentAuto.getFirst());
+        RobotState.getInstance().setAutoStartPose(currentStartPose);
         DrivetrainSubsystem.getInstance().resetPose(currentStartPose); // still red?
       }
     }
@@ -78,7 +78,7 @@ public class AutoChooser {
   // -------------------------------- HELPERS -------------------------------- //
   public static Pose2d getAllianceAdjustedPose(Pose2d bluePose) {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-      return FlippingUtil.flipFieldPose(bluePose);
+      return ChoreoAllianceFlipUtil.flip(bluePose);
     } else {
       return bluePose;
     }
@@ -95,7 +95,7 @@ public class AutoChooser {
 
     Pose2d currentStartPose = currentAuto.getFirst();
     if (currentStartPose != null) {
-      RobotState.getInstance().setAutoStartPose(currentAuto.getFirst());
+      RobotState.getInstance().setAutoStartPose(currentStartPose);
       DrivetrainSubsystem.getInstance().resetPose(currentStartPose);
     }
     return currentAuto.getSecond();

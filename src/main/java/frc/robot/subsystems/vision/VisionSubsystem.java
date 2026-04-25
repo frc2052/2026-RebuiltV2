@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class VisionSubsystem extends SubsystemBase {
-  private StatusSignal<Angle> yawSignal = DrivetrainSubsystem.getInstance().getPigeon2().getYaw();
   private StatusSignal<Angle> pitchSignal =
       DrivetrainSubsystem.getInstance().getPigeon2().getPitch();
   private StatusSignal<Angle> rollSignal = DrivetrainSubsystem.getInstance().getPigeon2().getRoll();
@@ -48,7 +47,6 @@ public class VisionSubsystem extends SubsystemBase {
 
   private VisionSubsystem() {
     configureLimelights();
-    yawSignal.setUpdateFrequency(100);
     pitchSignal.setUpdateFrequency(20);
     rollSignal.setUpdateFrequency(20);
   }
@@ -75,7 +73,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    filter(readMT1(LimelightCamera.BACK, previousChassisEstimate))
+    filter(readMT2(LimelightCamera.BACK, previousChassisEstimate))
         .ifPresent(
             e -> {
               RobotState.getInstance().setChassisVisionFieldPose(e.pose);
@@ -83,7 +81,7 @@ public class VisionSubsystem extends SubsystemBase {
                   .addVisionMeasurement(
                       e.pose,
                       Utils.fpgaToCurrentTime(e.timestampSeconds),
-                      calculateMT1StandardDeviation(e));
+                      calculateMT2StandardDeviations(e));
             });
     pushYaw(LimelightCamera.BACK);
 
@@ -91,7 +89,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public void pushYaw(LimelightCamera camera) {
-    Angle yaw = yawSignal.getValue();
+    Angle yaw = robotState.getDrivetrainState().Pose.getRotation().getMeasure();
     Angle pitch = pitchSignal.getValue();
     Angle roll = rollSignal.getValue();
 
@@ -182,7 +180,11 @@ public class VisionSubsystem extends SubsystemBase {
     }
     if (closestTagDist < 1) closestTagDist = 1;
 
-    double distanceToCurrentSTD = RobotState.getInstance().getFieldToRobot().getTranslation().getDistance(estimate.pose.getTranslation());
+    double distanceToCurrentSTD =
+        RobotState.getInstance()
+            .getFieldToRobot()
+            .getTranslation()
+            .getDistance(estimate.pose.getTranslation());
 
     stdDev =
         VisionConstants.CHASSIS_XY_STDDEV_COEFFICIENT
