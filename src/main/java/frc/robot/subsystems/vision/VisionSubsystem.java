@@ -172,9 +172,12 @@ public class VisionSubsystem extends SubsystemBase {
     }
     if (closestTagDist < 1) closestTagDist = 1;
 
+    double distanceToCurrentSTD = RobotState.getInstance().getFieldToRobot().getTranslation().getDistance(estimate.pose.getTranslation());
+
     stdDev =
         VisionConstants.CHASSIS_XY_STDDEV_COEFFICIENT
                 * Math.pow(closestTagDist, 2)
+                * distanceToCurrentSTD
                 / estimate.tagCount
             + VisionConstants.DEFAULT_XY_STDDEV;
 
