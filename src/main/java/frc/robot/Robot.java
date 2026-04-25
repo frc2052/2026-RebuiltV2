@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.autos.AutoChooser;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
@@ -21,6 +22,10 @@ public class Robot extends TimedRobot {
     // Force load this when the robot starts so that it doesn't cause 3 second overruns.
     double initialize = FieldConstants.fieldWidth;
     autoChooser = AutoChooser.create(robotContainer);
+    addPeriodic(
+        VisionSubsystem.getInstance()::visionPeriodic,
+        Constants.VISION_LOOP_PERIOD,
+        Constants.VISION_LOOP_OFFSET);
   }
 
   @Override

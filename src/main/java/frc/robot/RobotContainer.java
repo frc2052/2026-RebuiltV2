@@ -52,7 +52,7 @@ public class RobotContainer {
   public final IntakePivotSubsystem intakePivot = IntakePivotSubsystem.getInstance();
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
-  //   public final LEDSubsystem leds = LEDSubsystem.getInstance();
+  // public final LEDSubsystem leds = LEDSubsystem.getInstance();
 
   public final T16000MJoystick translationJoystick = new T16000MJoystick(0);
   public final T16000MJoystick rotationJoystick = new T16000MJoystick(1);
@@ -123,7 +123,7 @@ public class RobotContainer {
     translationJoystick
         .frontTrigger()
         .whileTrue(intake.runIntakeCommand())
-        .onTrue(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+        .onTrue(intakePivot.setCommand(IntakePosition.DEPOT_POSITION));
 
     rotationJoystick
         .frontTrigger()
@@ -176,7 +176,10 @@ public class RobotContainer {
                         translationJoystick::getX,
                         rotationJoystick::getX,
                         () -> true, // field centric
-                        () -> false, // use SOTM
+                        () ->
+                            !superstructure
+                                .getCurrentFieldRegion()
+                                .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
                         () ->
                             MathHelpers.epsilonEquals(
                                     MathUtil.angleModulus(
@@ -319,7 +322,7 @@ public class RobotContainer {
     secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
 
     // halfway intake
-    secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
+    secondaryPanel.button(5).onFalse(intakePivot.setCommand(IntakePosition.DEPOT_POSITION));
 
     // intake out
     secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));

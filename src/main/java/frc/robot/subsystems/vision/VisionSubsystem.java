@@ -71,8 +71,7 @@ public class VisionSubsystem extends SubsystemBase {
     // LimelightCamera.RIGHT.getTable().getEntry("rewind_enable_set").setDouble(0);
   }
 
-  @Override
-  public void periodic() {
+  public void visionPeriodic() {
     filter(readMT2(LimelightCamera.BACK, previousChassisEstimate))
         .ifPresent(
             e -> {

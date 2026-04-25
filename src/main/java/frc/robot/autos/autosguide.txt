@@ -13,8 +13,11 @@ When you want to make a new auto:
 Autos ideas
 - being able to start @ different locations like on the bump for L / R
 
-- left & right double sweep
-- right preload & outpost auto
-- right delayed bump swipe + outpost auto
-- left & right delayed side swipe (into middle of field) + outpost auto 
-- quick over the bump, wait in front of hub & then sweep
+- left double sweep 
+- right midway sweep
+- left midway sweep
+- right full sweep
+
+right auto changes
+- loop de loop behind the hub
+- score while actuating

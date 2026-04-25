@@ -54,7 +54,7 @@ public final class ShooterConstants {
     ROLLER_CONFIG.slot1kV = 0; // 0.8
     ROLLER_CONFIG.slot1kA = 0;
 
-    ROLLER_CONFIG.motionMagicAcceleration = 150;
+    ROLLER_CONFIG.motionMagicAcceleration = 75;
     ROLLER_CONFIG.motionMagicJerk = 0;
     ROLLER_CONFIG.motionMagicFeedForward = 0;
 
@@ -66,7 +66,7 @@ public final class ShooterConstants {
     ROLLER_CONFIG.slot0kDeadband = 0.5;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
     ROLLER_CONFIG.statorCurrentLimit = Amps.of(80);
-    ROLLER_CONFIG.enableStatorCurrentLimit = true;
+    ROLLER_CONFIG.enableStatorCurrentLimit = false;
     ROLLER_CONFIG.supplyCurrentLimit = Amps.of(40);
     ROLLER_CONFIG.enableSupplyCurrentLimit = true;
   }

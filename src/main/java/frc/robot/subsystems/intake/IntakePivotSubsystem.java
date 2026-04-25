@@ -76,6 +76,7 @@ public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
 
   public enum IntakePosition {
     IN_POSITION(IntakeConstants.UP_POSITION),
+    DEPOT_POSITION(IntakeConstants.DEPOT_POSITION),
     STOW_POSITION(IntakeConstants.STOW_POSITION),
     HALFWAY_POSITION(IntakeConstants.HALFWAY_POSITION),
     OUT_POSITION(IntakeConstants.DOWN_POSITION);
