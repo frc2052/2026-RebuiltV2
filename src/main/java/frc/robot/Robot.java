@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.autos.AutoChooser;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem.LimelightCamera;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
@@ -37,7 +38,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    LimelightCamera.BACK.getTable().getEntry("throttle_set").setDouble(200);
+    LimelightCamera.LEFT.getTable().getEntry("throttle_set").setDouble(200);
+    LimelightCamera.RIGHT.getTable().getEntry("throttle_set").setDouble(200);
+  }
 
   @Override
   public void disabledPeriodic() {
@@ -45,7 +50,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    LimelightCamera.BACK.getTable().getEntry("throttle_set").setDouble(0);
+    LimelightCamera.LEFT.getTable().getEntry("throttle_set").setDouble(0);
+    LimelightCamera.RIGHT.getTable().getEntry("throttle_set").setDouble(0);
+  }
 
   @Override
   public void autonomousInit() {

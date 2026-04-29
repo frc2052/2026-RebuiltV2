@@ -137,7 +137,7 @@ public class AutoFactory {
                     followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), //
                     followPathCommand(ChorPaths.LNEUTRAL_LBUMP)),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            scoreWhileActuatingHalfway(TargetType.HUB, 2.5),
+            scoreWhileActuatingHalfway(TargetType.HUB, 2), // reduced for PM6 auto
             postScoringCleanup()));
   }
 
@@ -166,7 +166,7 @@ public class AutoFactory {
                     followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1),
                     followPathCommand(ChorPaths.RNEUTRAL_RBUMP)),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            scoreWhileActuatingHalfway(TargetType.HUB, 2.5),
+            scoreWhileActuatingHalfway(TargetType.HUB, 2), // reduced for PM6 auto
             postScoringCleanup()));
   }
 

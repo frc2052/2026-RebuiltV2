@@ -13,7 +13,7 @@ public class HubShootingTable extends ShootingTableBase {
 
   private static HubShootingTable INSTANCE;
 
-  private static final double squishMod = 0.75;
+  private static final double squishMod = 0.75 + 1.5;
 
   static {
     Map<Distance, Pair<AngularVelocity, Angle>> shootingTable = new HashMap<>();

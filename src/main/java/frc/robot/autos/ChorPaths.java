@@ -1,5 +1,6 @@
 package frc.robot.autos;
 
+// spotless: off
 public enum ChorPaths {
   PRELOAD_ONLY_LEFT("PRELOAD_ONLY_LEFT"),
   PRELOAD_ONLY_RIGHT("PRELOAD_ONLY_RIGHT"),
@@ -13,7 +14,8 @@ public enum ChorPaths {
   LT_DELAY_SWIPE("LT_DELAY_SWIPE"),
   LBUMP_START("LBUMP_START"),
   DEPOT_PICKUP("DEPOT_PICKUP"),
-  LBUMP_HUB("LBUMP_HUB"),
+  LBUMP_HUB("LBUMP_HUB"), // neutral zone first
+  LBUMP_HUB2("LBUMP_HUB2"), // behind the hub first
   DEPOT_SCORE("DEPOT_SCORE"),
   DEPOT_RETURN("DEPOT_RETURN"),
 
@@ -24,7 +26,8 @@ public enum ChorPaths {
   RNEUTRAL_RBUMP("RNEUTRAL_RBUMP"),
   //
   RT_DELAY_SWIPE("RT_DELAY_SWIPE"),
-  RBUMP_HUB("RBUMP_HUB"),
+  RBUMP_HUB("RBUMP_HUB"), // neutral zone first
+  RBUMP_HUB2("RBUMP_HUB2"), // behind the hub first
 
   // center
   CENTER_BACKUP("CENTER_BACKUP"),
@@ -57,3 +60,5 @@ public enum ChorPaths {
     return pathName;
   }
 }
+
+// spotless: on

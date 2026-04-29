@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.input.T16000MJoystick;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem.IntakePosition;
 import frc.robot.subsystems.intake.IntakeRollerSubsystem;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
@@ -134,7 +136,21 @@ public class RobotContainer {
 
     rotationJoystick
         .frontTrigger()
-        .onTrue(superstructure.setStateCommand(SuperstructureState.TRENCH));
+        .onTrue(
+            Commands.sequence(
+                new InstantCommand(
+                    () ->
+                        superstructure.setManualShootingParameters(
+                            new Pair<>(
+                                ShooterConstants.IDLE_VELOCITY, HoodConstants.HOOD_MIN_ANGLE))),
+                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  if (superstructure.getCurrentState().equals(SuperstructureState.MANUAL)) {
+                    superstructure.setCurrentState(SuperstructureState.TRENCH);
+                  }
+                }));
 
     // override target to depot feeding
     rotationJoystick
