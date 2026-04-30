@@ -15,11 +15,13 @@ public enum Autos {
 
   // left
   LEFT_SINGLE_SWEEP(AutoFactory::leftSingleTrenchSweep),
-  LEFT_DOUBLE_SWEEP(AutoFactory::leftDoubleSweep),
+  LEFT_DOUBLE_SWEEP_NZ_HUB(AutoFactory::leftDoubleSweepNZHub),
+  LEFT_DOUBLE_SWEEP_HUB_NZ(AutoFactory::leftDoubleSweepHubNZ),
 
   // right
   RIGHT_SINGLE_SWEEP(AutoFactory::rightSingleTrenchSweep), //
-  RIGHT_DOUBLE_SWEEP(AutoFactory::rightDoubleSweep), //
+  RIGHT_DOUBLE_SWEEP_NZ_HUB(AutoFactory::rightDoubleSweepNZHub), //
+  RIGHT_DOUBLE_SWEEP_HUB_NZ(AutoFactory::rightDoubleSweepHubNZ),
   RIGHT_FULL_SWEEP(AutoFactory::rightFullSweep),
 
   DEPOT(AutoFactory::Depot),

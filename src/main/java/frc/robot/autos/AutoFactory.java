@@ -33,6 +33,7 @@ import frc.robot.subsystems.hood.HoodSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem;
 import frc.robot.subsystems.intake.IntakePivotSubsystem.IntakePosition;
 import frc.robot.subsystems.intake.IntakeRollerSubsystem;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
@@ -130,18 +131,21 @@ public class AutoFactory {
     return Pair.of(
         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
         Commands.sequence(
-            postScoringCleanup(),
-            // Commands.waitSeconds(0.2), // wait b4 going under trench
+            // postScoringCleanup(),
+            // intake the whole time
+            // speed up shooter over the bump
+            // final checks / align command w/ timeout
             Commands.deadline(
                 Commands.sequence(
-                    followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), //
-                    followPathCommand(ChorPaths.LNEUTRAL_LBUMP)),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), postScoringCleanup()),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             scoreWhileActuatingHalfway(TargetType.HUB, 2), // reduced for PM6 auto
             postScoringCleanup()));
   }
 
-  Pair<Pose2d, Command> leftDoubleSweep() {
+  Pair<Pose2d, Command> leftDoubleSweepNZHub() {
     return Pair.of(
         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
         Commands.sequence(
@@ -150,7 +154,21 @@ public class AutoFactory {
             Commands.deadline(
                 Commands.sequence(
                     followPathCommand(ChorPaths.LBUMP_HUB),
-                    followPathCommand(ChorPaths.LNEUTRAL_LBUMP)),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 2.5)));
+  }
+
+  Pair<Pose2d, Command> leftDoubleSweepHubNZ() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            leftSingleTrenchSweep().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LBUMP_HUB2),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             scoreWhileActuatingHalfway(TargetType.HUB, 2.5)));
   }
@@ -163,14 +181,15 @@ public class AutoFactory {
             postScoringCleanup(),
             Commands.deadline(
                 Commands.sequence(
-                    followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1),
-                    followPathCommand(ChorPaths.RNEUTRAL_RBUMP)),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1), postScoringCleanup()),
+                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             scoreWhileActuatingHalfway(TargetType.HUB, 2), // reduced for PM6 auto
             postScoringCleanup()));
   }
 
-  Pair<Pose2d, Command> rightDoubleSweep() {
+  Pair<Pose2d, Command> rightDoubleSweepNZHub() {
     return Pair.of(
         getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
         Commands.sequence(
@@ -179,7 +198,21 @@ public class AutoFactory {
             Commands.deadline(
                 Commands.sequence(
                     followPathCommand(ChorPaths.RBUMP_HUB),
-                    followPathCommand(ChorPaths.RNEUTRAL_RBUMP)),
+                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            scoreWhileActuatingHalfway(TargetType.HUB, 2.5)));
+  }
+
+  Pair<Pose2d, Command> rightDoubleSweepHubNZ() {
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
+        Commands.sequence(
+            rightSingleTrenchSweep().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.RBUMP_HUB2),
+                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             scoreWhileActuatingHalfway(TargetType.HUB, 2.5)));
   }
@@ -389,6 +422,21 @@ public class AutoFactory {
 
   // shooting
 
+  public Command idleShooter() {
+    return Commands.sequence(
+            Commands.runOnce(
+                () ->
+                    superstructure.setManualShootingParameters(
+                        new Pair<>(ShooterConstants.IDLE_VELOCITY, HoodConstants.HOOD_MIN_ANGLE))),
+            superstructure.setStateCommand(SuperstructureState.MANUAL))
+        .finallyDo(
+            () -> {
+              if (superstructure.getCurrentState().equals(SuperstructureState.MANUAL)) {
+                superstructure.setCurrentState(SuperstructureState.TRENCH);
+              }
+            });
+  }
+
   public Command postScoringCleanup() {
     return Commands.sequence(
         Commands.runOnce(
@@ -406,6 +454,35 @@ public class AutoFactory {
 
   public Command trenchScoringState() {
     return Commands.runOnce(() -> superstructure.setStateCommand(SuperstructureState.TRENCH));
+  }
+
+  public Command preScoringPrep(TargetType target, double scoreTime) {
+    // wait until
+    return Commands.parallel(
+        Commands.waitUntil(
+            () ->
+                (shooter.isAtGoalVelocity(RotationsPerSecond.of(1))
+                    && MathHelpers.epsilonEquals(
+                        MathUtil.angleModulus(
+                            superstructure
+                                    .getLastCalculatedProfile()
+                                    .aimingParameters
+                                    .robotRotation
+                                    .getRadians()
+                                + Math.PI),
+                        MathUtil.angleModulus(
+                            RobotState.getInstance().getFieldToRobot().getRotation().getRadians()),
+                        Math.toRadians(3)))),
+        // state; feeder; aiming drive command
+        Commands.sequence(
+            superstructure.setStateCommand(SuperstructureState.SHOOTING),
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                aimingDriveCommand(target))));
+  }
+
+  public Command scoring(double scoreTime) {
+    return Commands.deadline(Commands.waitSeconds(scoreTime), firingCommand());
   }
 
   public Command simpleScore(TargetType target, double scoreTime) {
@@ -493,7 +570,6 @@ public class AutoFactory {
   }
 
   // actuates intake
-  // TODO: test if we should keep the intake all the way up
   public Command scoreWhileActuatingHalfway(TargetType target, double scoreTime) {
     return Commands.deadline(
         simpleScore(target, scoreTime),

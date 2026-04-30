@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.team2052.lib.helpers.MathHelpers;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.FieldRegion;
 import frc.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import frc.robot.subsystems.superstructure.Superstructure.TargetType;
+import frc.robot.subsystems.superstructure.shotTables.HubShootingTable;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.FieldConstants;
 import frc.robot.util.MatchState;
@@ -290,6 +292,59 @@ public class RobotContainer {
     secondaryPanel
         .button(4)
         .onFalse(Commands.runOnce(() -> superstructure.decreaseBrownoutBoost()));
+
+    // RIGHT TOWER
+    secondaryPanel
+        .button(8)
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(
+                    () ->
+                        superstructure.setManualShootingParameters(
+                            //         new Pair<>(RotationsPerSecond.of(0), Degrees.of(25)))),
+                            HubShootingTable.getInstance()
+                                .getShootingParameters(Meters.of(3.914)))),
+                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    // LEFT TOWER
+    secondaryPanel
+        .button(7)
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(
+                    () ->
+                        superstructure.setManualShootingParameters(
+                            HubShootingTable.getInstance()
+                                .getShootingParameters(Meters.of(3.724)))),
+                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    // LEFT TRENCH
+    Trigger leftTrenchTrigger = new Trigger(() -> secondaryPanel.getY() < -0.5);
+    leftTrenchTrigger
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(
+                    () ->
+                        superstructure.setManualShootingParameters(
+                            HubShootingTable.getInstance()
+                                .getShootingParameters(Meters.of(3.372)))),
+                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    // RIGHT TRENCH
+    secondaryPanel
+        .button(9)
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(
+                    () ->
+                        superstructure.setManualShootingParameters(
+                            HubShootingTable.getInstance()
+                                .getShootingParameters(Meters.of(3.372)))),
+                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
   }
 
   private void configureTestBindings() {

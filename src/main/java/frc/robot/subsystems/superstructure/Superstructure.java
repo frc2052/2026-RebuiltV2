@@ -87,15 +87,17 @@ public class Superstructure extends SubsystemBase {
         break;
       case SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalPoint(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalPoint(
+            lastCalculatedProfile.aimingParameters.shooterVelocity.plus(brownoutBoost));
         break;
       case OVERRIDE_SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
-        shooter.setGoalPoint(lastCalculatedProfile.aimingParameters.shooterVelocity);
+        shooter.setGoalPoint(
+            lastCalculatedProfile.aimingParameters.shooterVelocity.plus(brownoutBoost));
         break;
       case MANUAL:
         hood.set(manualShootingParameters.getSecond());
-        shooter.setGoalPoint(manualShootingParameters.getFirst());
+        shooter.setGoalPoint(manualShootingParameters.getFirst().plus(brownoutBoost));
         break;
       case TRENCH:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);

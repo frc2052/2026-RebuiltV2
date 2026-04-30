@@ -38,7 +38,7 @@ public class HoodConstants {
 
     SERVO_CONSTANTS.slot0kP = 200;
     SERVO_CONSTANTS.slot0kI = 0;
-    SERVO_CONSTANTS.slot0kD = 0.0;
+    SERVO_CONSTANTS.slot0kD = 0;
     SERVO_CONSTANTS.slot0kS = 0;
     SERVO_CONSTANTS.slot0kV = 0;
     SERVO_CONSTANTS.slot0kA = 0;
