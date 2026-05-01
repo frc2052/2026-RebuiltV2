@@ -33,7 +33,12 @@ public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
   }
 
   public Command compressCommand() {
-    return Commands.runEnd(() -> setOpenLoop(0.2), () -> set(IntakePosition.STOW_POSITION), this)
+    return Commands.runEnd(
+            () -> setOpenLoop(0.2),
+            () ->
+                Commands.sequence(
+                    Commands.waitSeconds(0.5), setCommand(IntakePosition.OUT_POSITION)),
+            this)
         .onlyWhile(() -> getPosition().lt(IntakePosition.STOW_POSITION.angle));
   }
 

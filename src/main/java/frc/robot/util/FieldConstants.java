@@ -396,12 +396,13 @@ public class FieldConstants {
         new Translation2d(
             Meters.of(fieldLength)
                 .minus(Meters.of(LinesVertical.allianceZone / 2).plus(Feet.of(2))),
-            Meters.of(fieldWidth).times(0.25));
+            Meters.of(fieldWidth).times(0.75));
+
     public static final Translation2d RED_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT =
         new Translation2d(
             Meters.of(fieldLength)
                 .minus(Meters.of(LinesVertical.allianceZone / 2).plus(Feet.of(2))),
-            Meters.of(fieldWidth).times(0.75));
+            Meters.of(fieldWidth).times(0.25));
   }
 
   public static final class FieldRegions {

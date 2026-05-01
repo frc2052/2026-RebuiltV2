@@ -15,7 +15,9 @@ public enum ChorPaths {
   LBUMP_START("LBUMP_START"),
   DEPOT_PICKUP("DEPOT_PICKUP"),
   LBUMP_HUB("LBUMP_HUB"), // neutral zone first
+  LBUMP_HUB_SHORT("LBUMP_HUB_SHORT"),
   LBUMP_HUB2("LBUMP_HUB2"), // behind the hub first
+  LBUMP_HUB2_SHORT("LBUMP_HUB2_SHORT"),
   DEPOT_SCORE("DEPOT_SCORE"),
   DEPOT_RETURN("DEPOT_RETURN"),
 
@@ -27,7 +29,9 @@ public enum ChorPaths {
   //
   RT_DELAY_SWIPE("RT_DELAY_SWIPE"),
   RBUMP_HUB("RBUMP_HUB"), // neutral zone first
+  RBUMP_HUB_SHORT("RBUMP_HUB_SHORT"),
   RBUMP_HUB2("RBUMP_HUB2"), // behind the hub first
+  RBUMP_HUB2_SHORT("RBUMP_HUB2_SHORT"),
 
   // center
   CENTER_BACKUP("CENTER_BACKUP"),

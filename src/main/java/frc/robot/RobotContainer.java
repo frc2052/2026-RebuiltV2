@@ -297,52 +297,59 @@ public class RobotContainer {
         .button(8)
         .onTrue(
             Commands.sequence(
+                Commands.parallel(feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
                 Commands.runOnce(
                     () ->
                         superstructure.setManualShootingParameters(
                             //         new Pair<>(RotationsPerSecond.of(0), Degrees.of(25)))),
                             HubShootingTable.getInstance()
                                 .getShootingParameters(Meters.of(3.914)))),
-                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+                superstructure.setStateCommand(SuperstructureState.MANUAL))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // LEFT TOWER
     secondaryPanel
         .button(7)
         .onTrue(
-            Commands.sequence(
-                Commands.runOnce(
-                    () ->
-                        superstructure.setManualShootingParameters(
-                            HubShootingTable.getInstance()
-                                .getShootingParameters(Meters.of(3.724)))),
-                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
+                    Commands.runOnce(
+                        () ->
+                            superstructure.setManualShootingParameters(
+                                HubShootingTable.getInstance()
+                                    .getShootingParameters(Meters.of(3.724)))),
+                    superstructure.setStateCommand(SuperstructureState.MANUAL))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // LEFT TRENCH
     Trigger leftTrenchTrigger = new Trigger(() -> secondaryPanel.getY() < -0.5);
     leftTrenchTrigger
         .onTrue(
-            Commands.sequence(
-                Commands.runOnce(
-                    () ->
-                        superstructure.setManualShootingParameters(
-                            HubShootingTable.getInstance()
-                                .getShootingParameters(Meters.of(3.372)))),
-                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
+                    Commands.runOnce(
+                        () ->
+                            superstructure.setManualShootingParameters(
+                                HubShootingTable.getInstance()
+                                    .getShootingParameters(Meters.of(3.372)))),
+                    superstructure.setStateCommand(SuperstructureState.MANUAL))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // RIGHT TRENCH
     secondaryPanel
         .button(9)
         .onTrue(
-            Commands.sequence(
-                Commands.runOnce(
-                    () ->
-                        superstructure.setManualShootingParameters(
-                            HubShootingTable.getInstance()
-                                .getShootingParameters(Meters.of(3.372)))),
-                superstructure.setStateCommand(SuperstructureState.MANUAL)))
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
+                    Commands.runOnce(
+                        () ->
+                            superstructure.setManualShootingParameters(
+                                HubShootingTable.getInstance()
+                                    .getShootingParameters(Meters.of(3.372)))),
+                    superstructure.setStateCommand(SuperstructureState.MANUAL))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
   }
 

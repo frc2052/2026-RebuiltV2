@@ -7,7 +7,6 @@ import com.team2052.lib.geometry.Vector2d;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -48,11 +47,11 @@ public class ShootingCalculator {
         Meters.of(robotPose.getTranslation().getDistance(targetParameters.targetPosition));
     SmartDashboard.putNumber("Distance to Target", distanceToTarget.in(Meters));
     if (targetParameters.targetType.isFeeding()) {
-      targetParameters =
-          new TargetParameters(
-              new Translation2d(
-                  targetParameters.targetPosition.getX(), robotPose.getTranslation().getY()),
-              targetParameters.targetType);
+      //   targetParameters =
+      //       new TargetParameters(
+      //           new Translation2d(
+      //               targetParameters.targetPosition.getX(), robotPose.getTranslation().getY()),
+      //           targetParameters.targetType);
     }
 
     Pair<AngularVelocity, Angle> shootingParameters =
@@ -82,11 +81,11 @@ public class ShootingCalculator {
     Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
 
     if (targetParameters.targetType.isFeeding()) {
-      targetParameters =
-          new TargetParameters(
-              new Translation2d(
-                  targetParameters.targetPosition.getX(), robotPose.getTranslation().getY()),
-              targetParameters.targetType);
+      //   targetParameters =
+      //       new TargetParameters(
+      //           new Translation2d(
+      //               targetParameters.targetPosition.getX(), robotPose.getTranslation().getY()),
+      //           targetParameters.targetType);
     }
 
     Vector2d sotmOffsetVector = calculateSOTMOffsetVector(targetParameters, robotVelocity);
