@@ -66,6 +66,7 @@ public final class IntakeConstants {
   public static final CANCoderConstants INTAKE_ENCODER_CONSTANTS = new CANCoderConstants();
 
   public static final Angle ENCODER_OFFSET = Rotations.of(-0.0244140625);
+  public static final Angle POSITION_TOLERANCE_ANGLE = Degrees.of(2);
 
   static {
     INTAKE_SERVO_CONSTANTS.name = "Intake Pivot";

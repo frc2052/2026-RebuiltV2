@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
@@ -31,6 +32,16 @@ public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
   private IntakePivotSubsystem(
       ServoSubsystemConstants constants, CANCoderConstants encoderConstants) {
     super(constants, encoderConstants);
+  }
+
+  public Command compressCommand() {
+    return Commands.runOnce(() -> setOpenLoop(0.1), this)
+        .until(
+            () ->
+                getPosition()
+                    .isNear(
+                        IntakePosition.STOW_POSITION.angle,
+                        IntakeConstants.POSITION_TOLERANCE_ANGLE));
   }
 
   public Command setCommand(double degrees) {

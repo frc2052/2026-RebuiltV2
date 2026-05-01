@@ -13,6 +13,7 @@ import com.team2052.lib.input.T16000MJoystick;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -52,7 +53,7 @@ public class RobotContainer {
   public final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
   public final StagerSubsystem stager = StagerSubsystem.getInstance();
   //   public final ExtendingHopperSubsystem hopper = ExtendingHopperSubsystem.getInstance();
-  public final IntakeRollerSubsystem intake = IntakeRollerSubsystem.getInstance();
+  public final IntakeRollerSubsystem intakeRoller = IntakeRollerSubsystem.getInstance();
   public final IntakePivotSubsystem intakePivot = IntakePivotSubsystem.getInstance();
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
@@ -126,7 +127,7 @@ public class RobotContainer {
     // run intake and push pivot out
     translationJoystick
         .frontTrigger()
-        .whileTrue(intake.runIntakeCommand())
+        .whileTrue(intakeRoller.runIntakeCommand())
         .onTrue(
             Commands.either(
                 intakePivot.setCommand(IntakePosition.DEPOT_POSITION),
@@ -188,71 +189,73 @@ public class RobotContainer {
 
     rotationJoystick
         .middleThumbButton()
-        .whileTrue(
-            Commands.sequence(
-                superstructure.setStateCommand(SuperstructureState.SHOOTING),
-                Commands.parallel(
-                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
-                    new AimingDriveCommand(
-                        translationJoystick::getY,
-                        translationJoystick::getX,
-                        rotationJoystick::getX,
-                        () -> true, // field centric
-                        () ->
-                            !superstructure
-                                .getCurrentFieldRegion()
-                                .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
-                        () ->
-                            MathHelpers.angleEpsilonEquals(
-                                    superstructure
-                                        .getLastCalculatedProfile()
-                                        .aimingParameters
-                                        .robotRotation
-                                        .getMeasure()
-                                        .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
-                                    RobotState.getInstance()
-                                        .getFieldToRobot()
-                                        .getRotation()
-                                        .getMeasure(),
-                                    Degrees.of(3))
-                                && superstructure
-                                    .getCurrentFieldRegion()
-                                    .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
-                        Optional.empty() // default target type
-                        ))))
-        .whileTrue(
-            Commands.sequence(
-                Commands.waitSeconds(0.5),
-                Commands.waitUntil(
-                    () ->
-                        (shooter.isAtGoalVelocity(
-                                RotationsPerSecond.of(
-                                    superstructure
-                                            .getCurrentFieldRegion()
-                                            .equals(FieldRegion.ALLIANCE_ZONE)
-                                        ? 1
-                                        : 5))
-                            && MathHelpers.angleEpsilonEquals(
-                                superstructure
-                                    .getLastCalculatedProfile()
-                                    .aimingParameters
-                                    .robotRotation
-                                    .getMeasure()
-                                    .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
-                                RobotState.getInstance()
-                                    .getFieldToRobot()
-                                    .getRotation()
-                                    .getMeasure(),
-                                Degrees.of(3)))), // .withTimeout(2),
-                Commands.waitSeconds(0.2),
-                new FiringCommand()))
+        .whileTrue(scoringSequenceCommand())
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+
+    // .whileTrue(
+    //     Commands.sequence(
+    //         superstructure.setStateCommand(SuperstructureState.SHOOTING),
+    //         Commands.parallel(
+    //             feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+    //             new AimingDriveCommand(
+    //                 translationJoystick::getY,
+    //                 translationJoystick::getX,
+    //                 rotationJoystick::getX,
+    //                 () -> true, // field centric
+    //                 () ->
+    //                     !superstructure
+    //                         .getCurrentFieldRegion()
+    //                         .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
+    //                 () ->
+    //                     MathHelpers.angleEpsilonEquals(
+    //                             superstructure
+    //                                 .getLastCalculatedProfile()
+    //                                 .aimingParameters
+    //                                 .robotRotation
+    //                                 .getMeasure()
+    //                                 .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+    //                             RobotState.getInstance()
+    //                                 .getFieldToRobot()
+    //                                 .getRotation()
+    //                                 .getMeasure(),
+    //                             Degrees.of(3))
+    //                         && superstructure
+    //                             .getCurrentFieldRegion()
+    //                             .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
+    //                 Optional.empty() // default target type
+    //                 ))))
+    // .whileTrue(
+    //     Commands.sequence(
+    //         Commands.waitSeconds(0.5),
+    //         Commands.waitUntil(
+    //             () ->
+    //                 (shooter.isAtGoalVelocity(
+    //                         RotationsPerSecond.of(
+    //                             superstructure
+    //                                     .getCurrentFieldRegion()
+    //                                     .equals(FieldRegion.ALLIANCE_ZONE)
+    //                                 ? 1
+    //                                 : 5))
+    //                     && MathHelpers.angleEpsilonEquals(
+    //                         superstructure
+    //                             .getLastCalculatedProfile()
+    //                             .aimingParameters
+    //                             .robotRotation
+    //                             .getMeasure()
+    //                             .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+    //                         RobotState.getInstance()
+    //                             .getFieldToRobot()
+    //                             .getRotation()
+    //                             .getMeasure(),
+    //                         Degrees.of(3)))), // .withTimeout(2),
+    //         Commands.waitSeconds(0.2),
+    //         new FiringCommand()))
 
     translationJoystick
         .leftThumbButton()
         .whileTrue(
             Commands.parallel(
-                intake.runOuttakeCommand(),
+                intakeRoller.runOuttakeCommand(),
                 floor.runAtVelocityCommand(RotationsPerSecond.of(-50)),
                 stager.runAtVelocityCommand(RotationsPerSecond.of(-50)),
                 feeder.runAtVelocityCommand(RotationsPerSecond.of(-50)),
@@ -277,6 +280,7 @@ public class RobotContainer {
 
     // intake out
     secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+
     // set hood to min angle
     secondaryPanel.button(10).onFalse(hood.setCommand(HoodConstants.HOOD_MIN_ANGLE));
 
@@ -436,7 +440,7 @@ public class RobotContainer {
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
     translationJoystick
         .frontTrigger()
-        .whileTrue(intake.runIntakeCommand())
+        .whileTrue(intakeRoller.runIntakeCommand())
         .onTrue(intakePivot.setCommand(IntakePosition.OUT_POSITION));
     // stow intake
     secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
@@ -497,5 +501,66 @@ public class RobotContainer {
                                 .getDistance(
                                     FieldConstants.FieldLocations.RED_ALLIANCE_HUB_LOCATION)),
                 Set.of(new Subsystem() {})));
+  }
+
+  private Command scoringSequenceCommand() {
+    return Commands.parallel(
+        Commands.sequence(
+            superstructure.setStateCommand(SuperstructureState.SHOOTING),
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                new AimingDriveCommand(
+                    translationJoystick::getY,
+                    translationJoystick::getX,
+                    rotationJoystick::getX,
+                    () -> true, // field centric
+                    () ->
+                        !superstructure
+                            .getCurrentFieldRegion()
+                            .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
+                    () ->
+                        MathHelpers.angleEpsilonEquals(
+                                superstructure
+                                    .getLastCalculatedProfile()
+                                    .aimingParameters
+                                    .robotRotation
+                                    .getMeasure()
+                                    .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+                                RobotState.getInstance()
+                                    .getFieldToRobot()
+                                    .getRotation()
+                                    .getMeasure(),
+                                Degrees.of(3))
+                            && superstructure
+                                .getCurrentFieldRegion()
+                                .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
+                    Optional.empty() // default target type
+                    ))),
+        Commands.sequence(
+            Commands.waitSeconds(0.5),
+            Commands.waitUntil(
+                () ->
+                    (shooter.isAtGoalVelocity(
+                            RotationsPerSecond.of(
+                                superstructure
+                                        .getCurrentFieldRegion()
+                                        .equals(FieldRegion.ALLIANCE_ZONE)
+                                    ? 1
+                                    : 5))
+                        && MathHelpers.angleEpsilonEquals(
+                            superstructure
+                                .getLastCalculatedProfile()
+                                .aimingParameters
+                                .robotRotation
+                                .getMeasure()
+                                .plus(Degrees.of(MatchState.isRedAlliance() ? 180 : 0)),
+                            RobotState.getInstance().getFieldToRobot().getRotation().getMeasure(),
+                            Degrees.of(3)))), // .withTimeout(2),
+            Commands.waitSeconds(0.2),
+            Commands.parallel(new FiringCommand(), compressHopperCommand())));
+  }
+
+  private Command compressHopperCommand() {
+    return Commands.parallel(intakeRoller.runIntakeCommand(), intakePivot.compressCommand());
   }
 }
