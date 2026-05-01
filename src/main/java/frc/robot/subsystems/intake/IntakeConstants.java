@@ -20,6 +20,7 @@ public final class IntakeConstants {
   public static final RollerSubsystemConstants INTAKE_ROLLER_CONSTANTS =
       new RollerSubsystemConstants();
   public static final AngularVelocity INTAKE_VELOCITY = RotationsPerSecond.of(96);
+  public static final AngularVelocity COMPRESS_SPEED = RotationsPerSecond.of(50);
 
   static {
     INTAKE_ROLLER_CONSTANTS.name = "Intake Roller";
@@ -35,7 +36,7 @@ public final class IntakeConstants {
               .withInvertMotorOutput(MotorAlignmentValue.Opposed)
         };
 
-    INTAKE_ROLLER_CONSTANTS.slot0kP = 20;
+    INTAKE_ROLLER_CONSTANTS.slot0kP = 10;
     INTAKE_ROLLER_CONSTANTS.slot0kI = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kD = 0;
     INTAKE_ROLLER_CONSTANTS.slot0kS = 0;
@@ -66,7 +67,7 @@ public final class IntakeConstants {
   public static final CANCoderConstants INTAKE_ENCODER_CONSTANTS = new CANCoderConstants();
 
   public static final Angle ENCODER_OFFSET = Rotations.of(-0.0244140625);
-  public static final Angle POSITION_TOLERANCE_ANGLE = Degrees.of(2);
+  public static final Angle POSITION_TOLERANCE_ANGLE = Degrees.of(3);
 
   static {
     INTAKE_SERVO_CONSTANTS.name = "Intake Pivot";
@@ -98,6 +99,8 @@ public final class IntakeConstants {
 
     INTAKE_SERVO_CONSTANTS.softwareMax = MAX_INTAKE_ARM_ANGLE;
     INTAKE_SERVO_CONSTANTS.softwareMin = Rotations.of(0);
+    INTAKE_SERVO_CONSTANTS.forwardSoftLimitEnable = true;
+    INTAKE_SERVO_CONSTANTS.reverseSoftLimitEnable = true;
     INTAKE_SERVO_CONSTANTS.enableSupplyCurrentLimit = true;
     INTAKE_SERVO_CONSTANTS.supplyCurrentLimit = Amps.of(20);
 

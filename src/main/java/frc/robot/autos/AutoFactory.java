@@ -507,7 +507,7 @@ public class AutoFactory {
                                             .getRotation()
                                             .getRadians()),
                                     Math.toRadians(3))))
-                    .withTimeout(1), // how much of a timeout?
+                    .withTimeout(0.75), // how much of a timeout?
                 Commands.deadline(Commands.waitSeconds(scoreTime), new FiringCommand())),
             // state; feeder; aiming drive command
             Commands.sequence(

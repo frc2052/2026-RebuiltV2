@@ -226,6 +226,10 @@ public abstract class ServoSubsystem extends SubsystemBase {
     return mode.toString();
   }
 
+  protected ControlMode getControlModeEnum() {
+    return mode;
+  }
+
   protected double getError() {
     if (mode == ControlMode.MOTION_MAGIC || mode == ControlMode.POSITION_PID) {
       return demand - getPosition().in(Degrees);
@@ -245,7 +249,7 @@ public abstract class ServoSubsystem extends SubsystemBase {
       leader.setControl(
           new PositionDutyCycle(demand / 360).withSlot(constants.positionSlot).withEnableFOC(true));
     } else {
-      leader.setControl(new DutyCycleOut(demand));
+      leader.setControl(new DutyCycleOut(demand).withEnableFOC(true));
     }
   }
 
