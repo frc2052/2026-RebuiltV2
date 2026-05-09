@@ -36,6 +36,7 @@ import frc.robot.subsystems.stager.StagerSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.FieldRegion;
 import frc.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import frc.robot.subsystems.superstructure.Superstructure.TargetType;
 import frc.robot.subsystems.superstructure.shotTables.HubShootingTable;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.MatchState;
@@ -151,37 +152,67 @@ public class RobotContainer {
                   }
                 }));
 
-    // // override target to depot feeding
-    // rotationJoystick
-    //     .leftThumbButton()
-    //     .whileTrue(
-    //         Commands.sequence(
-    //             superstructure.overrideTargetCommand(TargetType.DEPOT_FEEDING),
-    //             new AimingDriveCommand(
-    //                 translationJoystick::getY,
-    //                 translationJoystick::getX,
-    //                 rotationJoystick::getX,
-    //                 () -> true, // field centric
-    //                 () -> true, // use SOTM
-    //                 () -> false, // lock wheels
-    //                 Optional.of(TargetType.DEPOT_FEEDING))))
-    //     .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+    // override target to depot feeding
+    rotationJoystick
+        .leftThumbButton()
+        .whileTrue(
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
+                    superstructure.overrideTargetCommand(TargetType.DEPOT_FEEDING),
+                    new AimingDriveCommand(
+                        translationJoystick::getY,
+                        translationJoystick::getX,
+                        rotationJoystick::getX,
+                        () -> true, // field centric
+                        () -> true, // use SOTM
+                        () -> false, // lock wheels
+                        Optional.of(TargetType.OUTPOST_FEEDING))),
+                Commands.sequence(
+                    Commands.waitSeconds(0.25),
+                    Commands.waitUntil(
+                        () ->
+                            (shooter.isAtGoalVelocity(
+                                RotationsPerSecond.of(
+                                    superstructure
+                                            .getCurrentFieldRegion()
+                                            .equals(FieldRegion.ALLIANCE_ZONE)
+                                        ? 1
+                                        : 5)))),
+                    Commands.waitSeconds(0.2),
+                    Commands.parallel(new FiringCommand(), compressHopperCommand()))))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
-    // // override target to outpost feeding
-    // rotationJoystick
-    //     .rightThumbButton()
-    //     .whileTrue(
-    //         Commands.sequence(
-    //             superstructure.overrideTargetCommand(TargetType.OUTPOST_FEEDING),
-    //             new AimingDriveCommand(
-    //                 translationJoystick::getY,
-    //                 translationJoystick::getX,
-    //                 rotationJoystick::getX,
-    //                 () -> true, // field centric
-    //                 () -> true, // use SOTM
-    //                 () -> false, // lock wheels
-    //                 Optional.of(TargetType.OUTPOST_FEEDING))))
-    //     .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+    // override target to outpost feeding
+    rotationJoystick
+        .rightThumbButton()
+        .whileTrue(
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
+                    superstructure.overrideTargetCommand(TargetType.OUTPOST_FEEDING),
+                    new AimingDriveCommand(
+                        translationJoystick::getY,
+                        translationJoystick::getX,
+                        rotationJoystick::getX,
+                        () -> true, // field centric
+                        () -> true, // use SOTM
+                        () -> false, // lock wheels
+                        Optional.of(TargetType.OUTPOST_FEEDING))),
+                Commands.sequence(
+                    Commands.waitSeconds(0.25),
+                    Commands.waitUntil(
+                        () ->
+                            (shooter.isAtGoalVelocity(
+                                RotationsPerSecond.of(
+                                    superstructure
+                                            .getCurrentFieldRegion()
+                                            .equals(FieldRegion.ALLIANCE_ZONE)
+                                        ? 1
+                                        : 5)))),
+                    Commands.waitSeconds(0.2),
+                    Commands.parallel(new FiringCommand(), compressHopperCommand()))))
+        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     rotationJoystick
         .middleThumbButton()
@@ -297,14 +328,15 @@ public class RobotContainer {
         .button(8)
         .onTrue(
             Commands.sequence(
-                Commands.parallel(feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
-                Commands.runOnce(
-                    () ->
-                        superstructure.setManualShootingParameters(
-                            //         new Pair<>(RotationsPerSecond.of(0), Degrees.of(25)))),
-                            HubShootingTable.getInstance()
-                                .getShootingParameters(Meters.of(3.914)))),
-                superstructure.setStateCommand(SuperstructureState.MANUAL))))
+                Commands.parallel(
+                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                    Commands.runOnce(
+                        () ->
+                            superstructure.setManualShootingParameters(
+                                //         new Pair<>(RotationsPerSecond.of(0), Degrees.of(25)))),
+                                HubShootingTable.getInstance()
+                                    .getShootingParameters(Meters.of(3.914)))),
+                    superstructure.setStateCommand(SuperstructureState.MANUAL))))
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // LEFT TOWER

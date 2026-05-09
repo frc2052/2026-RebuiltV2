@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.GyroTrimConfigs;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -62,6 +63,10 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     if (Robot.isSimulation()) {
       startSimThread();
     }
+
+    GyroTrimConfigs trim = new GyroTrimConfigs().withGyroScalarZ(3.263); // -3.263
+
+    getPigeon2().getConfigurator().apply(trim);
 
     CommandScheduler.getInstance().registerSubsystem(this);
     configureAutoBuilder();
