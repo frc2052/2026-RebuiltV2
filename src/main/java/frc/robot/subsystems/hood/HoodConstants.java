@@ -22,7 +22,7 @@ public class HoodConstants {
   public static final double OPEN_LOOP_HOMING_SPEED = -0.1;
   // before new gear 0.728281
   // after new gear 0.736816
-  public static final Angle ENCODER_OFFSET = Rotations.of(-0.728281);
+  public static final Angle ENCODER_OFFSET = Rotations.of(-0.974853515625);
 
   public static final ServoSubsystemConstants SERVO_CONSTANTS = new ServoSubsystemConstants();
 

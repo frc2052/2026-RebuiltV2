@@ -56,19 +56,19 @@ public class VisionSubsystem extends SubsystemBase {
         .getTable()
         .getEntry("camerapose_robotspace_set")
         .setDoubleArray(BackLimelightConstants.LIMELIGHT_POSE);
-    // LimelightCamera.LEFT
-    //     .getTable()
-    //     .getEntry("camerapose_robotspace_set")
-    //     .setDoubleArray(LeftLimelightConstants.LIMELIGHT_POSE);
-    // LimelightCamera.RIGHT
-    //     .getTable()
-    //     .getEntry("camerapose_robotspace_set")
-    //     .setDoubleArray(RightLimelightConstants.LIMELIGHT_POSE);
+    LimelightCamera.LEFT
+        .getTable()
+        .getEntry("camerapose_robotspace_set")
+        .setDoubleArray(LeftLimelightConstants.LIMELIGHT_POSE);
+    LimelightCamera.RIGHT
+        .getTable()
+        .getEntry("camerapose_robotspace_set")
+        .setDoubleArray(RightLimelightConstants.LIMELIGHT_POSE);
 
     // set double to 1 for enable, 0 to disable
     LimelightCamera.BACK.getTable().getEntry("rewind_enable_set").setDouble(0);
-    // LimelightCamera.LEFT.getTable().getEntry("rewind_enable_set").setDouble(0);
-    // LimelightCamera.RIGHT.getTable().getEntry("rewind_enable_set").setDouble(0);
+    LimelightCamera.LEFT.getTable().getEntry("rewind_enable_set").setDouble(0);
+    LimelightCamera.RIGHT.getTable().getEntry("rewind_enable_set").setDouble(0);
   }
 
   public void visionPeriodic() {
@@ -82,6 +82,29 @@ public class VisionSubsystem extends SubsystemBase {
                       Utils.fpgaToCurrentTime(e.timestampSeconds),
                       calculateMT2StandardDeviations(e));
             });
+
+    filter(readMT1(LimelightCamera.LEFT, previousChassisEstimate))
+        .ifPresent(
+            e -> {
+              RobotState.getInstance().setChassisVisionFieldPose(e.pose);
+              DrivetrainSubsystem.getInstance()
+                  .addVisionMeasurement(
+                      e.pose,
+                      Utils.fpgaToCurrentTime(e.timestampSeconds),
+                      calculateMT1StandardDeviation(e));
+            });
+
+    filter(readMT2(LimelightCamera.RIGHT, previousChassisEstimate))
+        .ifPresent(
+            e -> {
+              RobotState.getInstance().setChassisVisionFieldPose(e.pose);
+              DrivetrainSubsystem.getInstance()
+                  .addVisionMeasurement(
+                      e.pose,
+                      Utils.fpgaToCurrentTime(e.timestampSeconds),
+                      calculateMT1StandardDeviation(e));
+            });
+
     pushYaw(LimelightCamera.BACK);
 
     NetworkTableInstance.getDefault().flush();
