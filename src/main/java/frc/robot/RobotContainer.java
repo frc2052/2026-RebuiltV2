@@ -616,7 +616,7 @@ public class RobotContainer {
 
   private Command compressHopperCommand() {
     return Commands.sequence(
-        Commands.waitUntil(() -> translationJoystick.frontTrigger().getAsBoolean()),
+        // Commands.waitUntil(() -> !translationJoystick.frontTrigger().getAsBoolean()),
         Commands.deadline(
             intakePivot.compressCommand(),
             intakeRoller.runAtVelocityCommand(IntakeConstants.INTAKE_VELOCITY)));

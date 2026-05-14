@@ -77,7 +77,7 @@ public class ShootingCalculator {
 
   private static ShotProfile calculateSOTMShotProfile(
       TargetParameters targetParameters, Vector2d robotVelocity, boolean isSOTM) {
-    System.out.println("SOTM");
+    // System.out.println("SOTM");
     Pose2d robotPose = RobotState.getInstance().getFieldToRobot();
 
     if (targetParameters.targetType.isFeeding()) {
