@@ -383,11 +383,12 @@ public class FieldConstants {
     public static final Translation2d BLUE_ALLIANCE_OUTPOST_SIDE_FEEDING_AIMING_POINT =
         new Translation2d(
             Meters.of(LinesVertical.allianceZone / 2).minus(Feet.of(2)),
-            Meters.of(fieldWidth).times(0.75));
+            Meters.of(fieldWidth).times(0.25));
     public static final Translation2d BLUE_ALLIANCE_DEPOT_SIDE_FEEDING_AIMING_POINT =
         new Translation2d(
             Meters.of(LinesVertical.allianceZone / 2).minus(Feet.of(2)),
-            Meters.of(fieldWidth).times(0.25));
+            Meters.of(fieldWidth).times(0.75));
+
     // this is right in front of the outpost so it'll be likely to go in
 
     public static final Translation2d RED_ALLIANCE_HUB_LOCATION =

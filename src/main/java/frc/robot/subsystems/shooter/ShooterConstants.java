@@ -49,7 +49,7 @@ public final class ShooterConstants {
     ROLLER_CONFIG.slot0kV = 0; // 0
     ROLLER_CONFIG.slot0kA = 0.0; // 0
 
-    ROLLER_CONFIG.slot1kP = 16; // 12
+    ROLLER_CONFIG.slot1kP = 13; // 12
     ROLLER_CONFIG.slot1kI = 0;
     ROLLER_CONFIG.slot1kD = 0;
     ROLLER_CONFIG.slot1kS = 0; // 4.1

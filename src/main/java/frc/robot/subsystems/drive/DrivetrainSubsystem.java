@@ -64,7 +64,7 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
       startSimThread();
     }
 
-    GyroTrimConfigs trim = new GyroTrimConfigs().withGyroScalarZ(3.8); // -3.263
+    GyroTrimConfigs trim = new GyroTrimConfigs().withGyroScalarZ(0.869); // -3.263
 
     getPigeon2().getConfigurator().apply(trim);
 

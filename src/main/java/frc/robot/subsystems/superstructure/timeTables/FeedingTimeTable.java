@@ -16,7 +16,8 @@ public class FeedingTimeTable extends TimeTableBase {
     Map<Distance, Time> timeTable = new HashMap<>();
     // Initialize the time table with distance and corresponding time pairs
     timeTable.put(Meters.of(5.28), Seconds.of(1.2));
-    timeTable.put(Meters.of(9.08), Seconds.of(2.5));
+    timeTable.put(Meters.of(9.08), Seconds.of(1.9));
+    timeTable.put(Meters.of(11), Seconds.of(2.5));
     // Add more entries as needed
     INSTANCE = new FeedingTimeTable(timeTable);
   }

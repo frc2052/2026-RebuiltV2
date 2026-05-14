@@ -55,6 +55,7 @@ public class Superstructure extends SubsystemBase {
   @Getter @Setter private boolean isShootOnTheMove = SuperstructureConstants.DEFAULT_IS_SOTM;
 
   @Getter @Setter private AngularVelocity brownoutBoost = RotationsPerSecond.of(0);
+  public static final AngularVelocity squishyFactor = RotationsPerSecond.of(0);
 
   private static Superstructure INSTANCE;
 
@@ -88,20 +89,45 @@ public class Superstructure extends SubsystemBase {
       case SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
         shooter.setGoalPoint(
-            lastCalculatedProfile.aimingParameters.shooterVelocity.plus(brownoutBoost));
+            lastCalculatedProfile
+                .aimingParameters
+                .shooterVelocity
+                .plus(brownoutBoost)
+                .plus(squishyFactor));
         break;
       case OVERRIDE_SHOOTING:
         hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
         shooter.setGoalPoint(
-            lastCalculatedProfile.aimingParameters.shooterVelocity.plus(brownoutBoost));
+            lastCalculatedProfile
+                .aimingParameters
+                .shooterVelocity
+                .plus(brownoutBoost)
+                .plus(squishyFactor));
         break;
       case MANUAL:
         hood.set(manualShootingParameters.getSecond());
-        shooter.setGoalPoint(manualShootingParameters.getFirst().plus(brownoutBoost));
+        shooter.setGoalPoint(
+            manualShootingParameters.getFirst().plus(brownoutBoost).plus(squishyFactor));
         break;
       case TRENCH:
         hood.set(HoodConstants.HOOD_MIN_ANGLE);
-        shooter.setCoastOut();
+        double goal =
+            lastCalculatedProfile
+                .aimingParameters
+                .shooterVelocity
+                .plus(brownoutBoost)
+                .plus(squishyFactor)
+                .in(RotationsPerSecond);
+        if (goal > 36) {
+          goal = 36;
+        }
+
+        if (shooter.getVelocity().in(RotationsPerSecond) > goal + 3) {
+          shooter.setCoastOut();
+        } else {
+          shooter.setGoalPoint(RotationsPerSecond.of(goal));
+        }
+        // shooter.setCoastOut();
         break;
       default:
         // do nothing
@@ -186,7 +212,7 @@ public class Superstructure extends SubsystemBase {
       return; // Prevent recalculating multiple times in the same period
     }
 
-    lastCalculatedProfile = ShootingCalculator.calculateShotProfile(false, targetType);
+    lastCalculatedProfile = ShootingCalculator.calculateShotProfile(isShootOnTheMove, targetType);
     hasCalculatedShotProfileThisPeriod = true;
   }
 

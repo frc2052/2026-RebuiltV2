@@ -65,7 +65,7 @@ public class HoodSubsystem extends ServoSubsystemWithCANCoder {
       goalAngle = getPosition();
     }
 
-    // setSetpointMotionMagic(goalAngle);
+    setSetpointMotionMagic(goalAngle);
     lastGoalAngle = goalAngle;
 
     super.periodic();

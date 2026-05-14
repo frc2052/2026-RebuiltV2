@@ -60,7 +60,7 @@ public class ShooterSubsystem extends RollerSubsystem {
     if (goalPoint.in(RotationsPerSecond) == 0) {
       setCoastOut();
     }
-    ;
+    if (leader.getControlMode().getName().equals(coastControl.getName())) return;
     setGoalVelocityMotionMagic(goalPoint);
 
     // if ( // running open loop and within bounds

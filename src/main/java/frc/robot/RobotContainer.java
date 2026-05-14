@@ -386,18 +386,23 @@ public class RobotContainer {
   }
 
   //   private void configureTestBindings() {
-  //     /*  How to run these tests WITHOUT having logger:
-  //      * 1. make sure this method is called instead of configureMatchBindings() in the
-  // constructor
-  //      * 2. setup the hood first cause otherwise it will try to go to the min angle and if thats
-  // not setup it will break.
-  //      * 3. note that nothing should run on enable, so you can test everything individually
-  // before switching to the match bindings
-  //      * 4. check all the button bindings cause I put some of them (mostly secondary panel ones)
-  // on random numbers cause IDK which to use.
-  //      * 5. Just follow what each thing says to do, you'll be fine. Text me if you don't know how
-  // anything works.
-  //      */
+  //     //     /*  How to run these tests WITHOUT having logger:
+  //     //      * 1. make sure this method is called instead of configureMatchBindings() in the
+  //     // constructor
+  //     //      * 2. setup the hood first cause otherwise it will try to go to the min angle and if
+  //     // thats
+  //     // not setup it will break.
+  //     //      * 3. note that nothing should run on enable, so you can test everything
+  // individually
+  //     // before switching to the match bindings
+  //     //      * 4. check all the button bindings cause I put some of them (mostly secondary panel
+  //     // ones)
+  //     // on random numbers cause IDK which to use.
+  //     //      * 5. Just follow what each thing says to do, you'll be fine. Text me if you don't
+  // know
+  //     // how
+  //     // anything works.
+  //     //      */
 
   //     // DRIVETRAIN TESTS
 
@@ -412,7 +417,9 @@ public class RobotContainer {
   //             translationJoystick::getX,
   //             rotationJoystick::getX,
   //             () -> true));
-  //     translationJoystick.middleThumbButton().whileTrue(new FiringCommand());
+  //     translationJoystick
+  //         .middleThumbButton()
+  //         .whileTrue(Commands.parallel(new FiringCommand(), compressHopperCommand()));
   //     rotationJoystick
   //         .frontTrigger()
   //         .onTrue(feeder.runAtVelocityCommand(RotationsPerSecond.of(85)))
@@ -434,48 +441,48 @@ public class RobotContainer {
   //                             !superstructure
   //                                 .getCurrentFieldRegion()
   //                                 .equals(FieldRegion.ALLIANCE_ZONE), // use SOTM
-  //                         () ->
-  //                             MathHelpers.epsilonEquals(
-  //                                     MathUtil.angleModulus(
-  //                                         superstructure
-  //                                                 .getLastCalculatedProfile()
-  //                                                 .aimingParameters
-  //                                                 .robotRotation
-  //                                                 .getRadians()
-  //                                             + Math.PI),
-  //                                     MathUtil.angleModulus(
-  //                                         RobotState.getInstance()
-  //                                             .getFieldToRobot()
-  //                                             .getRotation()
-  //                                             .getRadians()),
-  //                                     Math.toRadians(3))
-  //                                 && superstructure
-  //                                     .getCurrentFieldRegion()
-  //                                     .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
+  //                         () -> false,
+  //                         //   MathHelpers.epsilonEquals(
+  //                         //           MathUtil.angleModulus(
+  //                         //               superstructure
+  //                         //                       .getLastCalculatedProfile()
+  //                         //                       .aimingParameters
+  //                         //                       .robotRotation
+  //                         //                       .getRadians()
+  //                         //                   + Math.PI),
+  //                         //           MathUtil.angleModulus(
+  //                         //               RobotState.getInstance()
+  //                         //                   .getFieldToRobot()
+  //                         //                   .getRotation()
+  //                         //                   .getRadians()),
+  //                         //           Math.toRadians(3))
+  //                         //   && superstructure
+  //                         //       .getCurrentFieldRegion()
+  //                         //       .equals(FieldRegion.ALLIANCE_ZONE), // lock wheels
   //                         Optional.empty() // default target type
   //                         ))))
-  //         .whileTrue(
-  //             Commands.sequence(
-  //                 Commands.waitSeconds(0.5),
-  //                 Commands.waitUntil(
-  //                     () ->
-  //                         (shooter.isAtGoalVelocity(RotationsPerSecond.of(1))
-  //                             && MathHelpers.epsilonEquals(
-  //                                 MathUtil.angleModulus(
-  //                                     superstructure
-  //                                             .getLastCalculatedProfile()
-  //                                             .aimingParameters
-  //                                             .robotRotation
-  //                                             .getRadians()
-  //                                         + Math.PI),
-  //                                 MathUtil.angleModulus(
-  //                                     RobotState.getInstance()
-  //                                         .getFieldToRobot()
-  //                                         .getRotation()
-  //                                         .getRadians()),
-  //                                 Math.toRadians(3)))), // .withTimeout(2),
-  //                 Commands.waitSeconds(0.2),
-  //                 new FiringCommand()))
+  //         //   .whileTrue(
+  //         //       Commands.sequence(
+  //         //           Commands.waitSeconds(0.5),
+  //         //           Commands.waitUntil(
+  //         //               () ->
+  //         //                   (shooter.isAtGoalVelocity(RotationsPerSecond.of(1))
+  //         //                     //   && MathHelpers.epsilonEquals(
+  //         //                     //       MathUtil.angleModulus(
+  //         //                     //           superstructure
+  //         //                     //                   .getLastCalculatedProfile()
+  //         //                     //                   .aimingParameters
+  //         //                     //                   .robotRotation
+  //         //                     //                   .getRadians()
+  //         //                     //               + Math.PI),
+  //         //                     //       MathUtil.angleModulus(
+  //         //                     //           RobotState.getInstance()
+  //         //                     //               .getFieldToRobot()
+  //         //                     //               .getRotation()
+  //         //                     //               .getRadians()),
+  //         //                           Math.toRadians(3)))), // .withTimeout(2),
+  //         //           Commands.waitSeconds(0.2),
+  //         //           new FiringCommand()))
   //         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
   //     translationJoystick
   //         .frontTrigger()
@@ -540,6 +547,15 @@ public class RobotContainer {
   //                                 .getDistance(
   //                                     FieldConstants.FieldLocations.RED_ALLIANCE_HUB_LOCATION)),
   //                 Set.of(new Subsystem() {})));
+  //     translationJoystick
+  //         .leftThumbButton()
+  //         .whileTrue(
+  //             Commands.parallel(
+  //                 intakeRoller.runOuttakeCommand(),
+  //                 floor.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+  //                 stager.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+  //                 feeder.runAtVelocityCommand(RotationsPerSecond.of(-50)),
+  //                 intakePivot.setCommand(IntakePosition.OUT_POSITION)));
   //   }
 
   private Command scoringSequenceCommand() {
@@ -599,9 +615,11 @@ public class RobotContainer {
   }
 
   private Command compressHopperCommand() {
-    return Commands.deadline(
-        intakePivot.compressCommand(),
-        intakeRoller.runAtVelocityCommand(IntakeConstants.INTAKE_VELOCITY));
+    return Commands.sequence(
+        Commands.waitUntil(() -> translationJoystick.frontTrigger().getAsBoolean()),
+        Commands.deadline(
+            intakePivot.compressCommand(),
+            intakeRoller.runAtVelocityCommand(IntakeConstants.INTAKE_VELOCITY)));
     // .finallyDo(
     //     () ->
     //         Commands.parallel(

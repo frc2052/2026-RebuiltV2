@@ -13,27 +13,25 @@ public class HubShootingTable extends ShootingTableBase {
 
   private static HubShootingTable INSTANCE;
 
-  private static final double squishMod = 0.75 + 1.25;
+  private static final double squishMod = 0; // 0.75 + 1.25
 
   static {
     Map<Distance, Pair<AngularVelocity, Angle>> shootingTable = new HashMap<>();
     // Initialize the shooting table with distance, shooter velocity, and hood angle pairs
     shootingTable.put(
-        Meters.of(1.5), new Pair<>(RotationsPerSecond.of(28.75 + squishMod), Degrees.of(3.6)));
+        Meters.of(1.6), new Pair<>(RotationsPerSecond.of(32 + squishMod), Degrees.of(7.9)));
     shootingTable.put(
-        Meters.of(2), new Pair<>(RotationsPerSecond.of(29.6 + squishMod), Degrees.of(4.6)));
+        Meters.of(2), new Pair<>(RotationsPerSecond.of(33 + squishMod), Degrees.of(9.8)));
     shootingTable.put(
-        Meters.of(2.5), new Pair<>(RotationsPerSecond.of(30 + squishMod), Degrees.of(6)));
+        Meters.of(2.5), new Pair<>(RotationsPerSecond.of(35 + squishMod), Degrees.of(12.8)));
     shootingTable.put(
-        Meters.of(3), new Pair<>(RotationsPerSecond.of(31.15 + squishMod), Degrees.of(7.7)));
+        Meters.of(3), new Pair<>(RotationsPerSecond.of(37.5 + squishMod), Degrees.of(14.3)));
     shootingTable.put(
-        Meters.of(3.5), new Pair<>(RotationsPerSecond.of(32.5 + squishMod), Degrees.of(11.26)));
+        Meters.of(3.5), new Pair<>(RotationsPerSecond.of(40 + squishMod), Degrees.of(17.8)));
     shootingTable.put(
-        Meters.of(4), new Pair<>(RotationsPerSecond.of(33.75 + squishMod), Degrees.of(15.26)));
+        Meters.of(4), new Pair<>(RotationsPerSecond.of(42 + squishMod), Degrees.of(19.8)));
     shootingTable.put(
-        Meters.of(4.5), new Pair<>(RotationsPerSecond.of(35.5 + squishMod), Degrees.of(19.76)));
-    shootingTable.put(
-        Meters.of(5), new Pair<>(RotationsPerSecond.of(36.75 + squishMod), Degrees.of(21.26)));
+        Meters.of(4.5), new Pair<>(RotationsPerSecond.of(44 + squishMod), Degrees.of(25.3)));
 
     // Add more entries as needed
     INSTANCE = new HubShootingTable(shootingTable);

@@ -17,12 +17,10 @@ import frc.robot.util.Ports;
  *  6 deg to 51 deg physically
  */
 public class HoodConstants {
-  public static final Angle HOOD_MIN_ANGLE = Rotations.of(0.01);
-  public static final Angle HOOD_MAX_ANGLE = Rotations.of(0.11792);
+  public static final Angle HOOD_MIN_ANGLE = Rotations.of(0.02);
+  public static final Angle HOOD_MAX_ANGLE = Rotations.of(0.206562);
   public static final double OPEN_LOOP_HOMING_SPEED = -0.1;
-  // before new gear 0.728281
-  // after new gear 0.736816
-  public static final Angle ENCODER_OFFSET = Rotations.of(-0.974853515625);
+  public static final Angle ENCODER_OFFSET = Rotations.of(-0.960853515625);
 
   public static final ServoSubsystemConstants SERVO_CONSTANTS = new ServoSubsystemConstants();
 
