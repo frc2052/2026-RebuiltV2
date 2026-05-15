@@ -55,7 +55,8 @@ public class Superstructure extends SubsystemBase {
   @Getter @Setter private boolean isShootOnTheMove = SuperstructureConstants.DEFAULT_IS_SOTM;
 
   @Getter @Setter private AngularVelocity brownoutBoost = RotationsPerSecond.of(0);
-  public static final AngularVelocity squishyFactor = RotationsPerSecond.of(0);
+  public static final AngularVelocity squishyFactor = RotationsPerSecond.of(1.25); // -0.125
+  public static final Angle hoodAdjust = Degrees.of(-0.5);
 
   private static Superstructure INSTANCE;
 
@@ -87,7 +88,7 @@ public class Superstructure extends SubsystemBase {
         shooter.setCoastOut();
         break;
       case SHOOTING:
-        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
+        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle.plus(hoodAdjust));
         shooter.setGoalPoint(
             lastCalculatedProfile
                 .aimingParameters
@@ -96,7 +97,7 @@ public class Superstructure extends SubsystemBase {
                 .plus(squishyFactor));
         break;
       case OVERRIDE_SHOOTING:
-        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle);
+        hood.set(lastCalculatedProfile.aimingParameters.hoodAngle.plus(hoodAdjust));
         shooter.setGoalPoint(
             lastCalculatedProfile
                 .aimingParameters
@@ -105,7 +106,7 @@ public class Superstructure extends SubsystemBase {
                 .plus(squishyFactor));
         break;
       case MANUAL:
-        hood.set(manualShootingParameters.getSecond());
+        hood.set(manualShootingParameters.getSecond().plus(hoodAdjust));
         shooter.setGoalPoint(
             manualShootingParameters.getFirst().plus(brownoutBoost).plus(squishyFactor));
         break;
@@ -122,7 +123,7 @@ public class Superstructure extends SubsystemBase {
           goal = 36;
         }
 
-        if (shooter.getVelocity().in(RotationsPerSecond) > goal + 3) {
+        if (shooter.getVelocity().in(RotationsPerSecond) > (goal + 1)) {
           shooter.setCoastOut();
         } else {
           shooter.setGoalPoint(RotationsPerSecond.of(goal));

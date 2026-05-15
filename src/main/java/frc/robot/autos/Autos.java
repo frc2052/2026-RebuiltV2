@@ -7,6 +7,10 @@ import java.util.function.Function;
 
 public enum Autos {
   NO_AUTO(AutoFactory::noAuto),
+  LEFT_DOUBLE_TRENCH(AutoFactory::leftTRDoubleSweep),
+  LEFT_DOUBLETRENCH_CTCW(AutoFactory::leftTRDoubleSweepCTCW),
+  RIGHT_DOUBLE_TRENCH(AutoFactory::rightTRDoubleSweep),
+  RIGHT_DOUBLETRENCH_CTCW(AutoFactory::rightTRDoubleSweepCTCW),
 
   // preload
   PRELOAD_ONLY_LEFT(AutoFactory::preloadOnlyLeft),
@@ -14,14 +18,14 @@ public enum Autos {
   PRELOAD_ONLY_CENTER(AutoFactory::preloadOnlyCenter),
 
   // left
-  LEFT_SINGLE_SWEEP(AutoFactory::leftSingleTrenchSweep),
+  LEFT_SINGLE_SWEEP(AutoFactory::leftSingleSweepBR),
   LEFT_DOUBLE_NZ_HUB(AutoFactory::leftDoubleSweepNZHub),
   LEFT_DOUBLE_NZ_HUB_SHORT(AutoFactory::leftDoubleSweepNZHubShort),
   LEFT_DOUBLE_HUB_NZ(AutoFactory::leftDoubleSweepHubNZ),
   LEFT_DOUBLE_HUB_NZ_SHORT(AutoFactory::leftDoubleSweepHubNZShort),
 
   // right
-  RIGHT_SINGLE_SWEEP(AutoFactory::rightSingleTrenchSweep), //
+  RIGHT_SINGLE_SWEEP(AutoFactory::rightSingleSweepBR), //
   RIGHT_DOUBLE_NZ_HUB(AutoFactory::rightDoubleSweepNZHub), //
   RIGHT_DOUBLE_NZ_HUB_SHORT(AutoFactory::rightDoubleSweepNZHubShort),
   RIGHT_DOUBLE_HUB_NZ(AutoFactory::rightDoubleSweepHubNZ),
