@@ -142,49 +142,6 @@ public class AutoFactory {
             postScoringCleanup()));
   }
 
-  Pair<Pose2d, Command> leftSingleSweepTR() { // TODO: confirm hood & shooter down
-    return Pair.of(
-        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
-        Commands.sequence(
-            Commands.deadline(
-                Commands.sequence(
-                    Commands.deadline(
-                        followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), postScoringCleanup()),
-                    Commands.deadline(
-                        followPathCommand(ChorPaths.SLOWER_LNEUTRALBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
-            postScoringCleanup()));
-  }
-
-  Pair<Pose2d, Command> leftTRDoubleSweep() {
-    return Pair.of(
-        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
-        Commands.sequence(
-            leftSingleSweepTR().getSecond(),
-            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
-            Commands.deadline(
-                Commands.sequence(
-                    followPathCommand(ChorPaths.LT_LOOP),
-                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2)));
-  }
-
-  Pair<Pose2d, Command> leftTRDoubleSweepCTCW() {
-    return Pair.of(
-        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
-        Commands.sequence(
-            leftSingleSweepTR().getSecond(),
-            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
-            Commands.deadline(
-                Commands.sequence(
-                    followPathCommand(ChorPaths.LT_LOOP_CTCW),
-                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2)));
-  }
-
   Pair<Pose2d, Command> leftDoubleSweepNZHub() {
     return Pair.of(
         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
@@ -241,6 +198,78 @@ public class AutoFactory {
             simpleScore(TargetType.HUB, 2.5)));
   }
 
+  Pair<Pose2d, Command> leftSingleSweepTR() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), postScoringCleanup()),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.SLOWER_LNEUTRALBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
+            postScoringCleanup()));
+  }
+
+   Pair<Pose2d, Command> leftSingleSweepTernchReturn() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.LTRENCH_LNEUTRAL1), postScoringCleanup()),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.LNEUTRAL_LTRENCH), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
+            postScoringCleanup()));
+  }
+
+  Pair<Pose2d, Command> leftTRDoubleSweep() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            leftSingleSweepTernchReturn().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LT_LOOP),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LTRENCH), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2)));
+  }
+
+  Pair<Pose2d, Command> leftTRTROut() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            leftSingleSweepTernchReturn().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LT_LOOP),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2)));
+  }
+
+  Pair<Pose2d, Command> leftTRDoubleSweepCTCW() {
+    return Pair.of(
+        getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
+        Commands.sequence(
+            leftSingleSweepTR().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.LT_LOOP_CTCW),
+                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2)));
+  }
+
   // RIGHT AUTOS
   Pair<Pose2d, Command> rightSingleSweepBR() {
     return Pair.of(
@@ -255,49 +284,6 @@ public class AutoFactory {
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
             postScoringCleanup()));
-  }
-
-  Pair<Pose2d, Command> rightSingleSweepTR() { // TODO: confirm hood & shooter down
-    return Pair.of(
-        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
-        Commands.sequence(
-            Commands.deadline(
-                Commands.sequence(
-                    Commands.deadline(
-                        followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1), postScoringCleanup()),
-                    Commands.deadline(
-                        followPathCommand(ChorPaths.SLOWER_RNEUTRALRBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
-            postScoringCleanup()));
-  }
-
-  Pair<Pose2d, Command> rightTRDoubleSweep() {
-    return Pair.of(
-        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
-        Commands.sequence(
-            rightSingleSweepTR().getSecond(),
-            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
-            Commands.deadline(
-                Commands.sequence(
-                    followPathCommand(ChorPaths.RT_LOOP),
-                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2)));
-  }
-
-  Pair<Pose2d, Command> rightTRDoubleSweepCTCW() {
-    return Pair.of(
-        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
-        Commands.sequence(
-            rightSingleSweepTR().getSecond(),
-            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
-            Commands.deadline(
-                Commands.sequence(
-                    followPathCommand(ChorPaths.RT_LOOP_CTCW),
-                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
-                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-            simpleScore(TargetType.HUB, 2)));
   }
 
   Pair<Pose2d, Command> rightDoubleSweepNZHub() {
@@ -354,6 +340,49 @@ public class AutoFactory {
                     Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             simpleScore(TargetType.HUB, 2.5)));
+  }
+
+  Pair<Pose2d, Command> rightSingleSweepTR() { // TODO: confirm hood & shooter down
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
+        Commands.sequence(
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.RTRENCH_RNEUTRAL1), postScoringCleanup()),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.SLOWER_RNEUTRALRBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2), // reduced for PM6 auto
+            postScoringCleanup()));
+  }
+
+  Pair<Pose2d, Command> rightTRDoubleSweep() {
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
+        Commands.sequence(
+            rightSingleSweepTR().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.RT_LOOP),
+                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2)));
+  }
+
+  Pair<Pose2d, Command> rightTRDoubleCTCW() {
+    return Pair.of(
+        getStartPose(ChorPaths.RTRENCH_RNEUTRAL1),
+        Commands.sequence(
+            rightSingleSweepTR().getSecond(),
+            IntakePivotSubsystem.getInstance().setCommand(IntakePosition.OUT_POSITION),
+            Commands.deadline(
+                Commands.sequence(
+                    followPathCommand(ChorPaths.RT_LOOP_CTCW),
+                    Commands.deadline(followPathCommand(ChorPaths.RNEUTRAL_RBUMP), idleShooter())),
+                IntakeRollerSubsystem.getInstance().runIntakeCommand()),
+            simpleScore(TargetType.HUB, 2)));
   }
 
   // full sweeps (left & right)
@@ -431,38 +460,6 @@ public class AutoFactory {
             followPathCommand(ChorPaths.LNEUTRAL_LBUMP),
             simpleScore(TargetType.HUB, 3)));
   }
-
-  // Pair<Pose2d, Command> leftDelayTrenchSwipe() {
-  //   return Pair.of(
-  //       getStartPose(ChorPaths.LT_DELAY_SWIPE),
-  //       Commands.sequence(
-  //           // wait for other team to pickup, then enter NZ
-  //           Commands.waitSeconds(3),
-  //           Commands.deadline(
-  //               Commands.sequence(
-  //                   followPathCommand(ChorPaths.LT_DELAY_SWIPE),
-  //                   followPathCommand(ChorPaths.LNEUTRAL_LTRENCH)),
-  //               IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-  //           // score pickup
-  //           simpleScore(TargetType.HUB, 3)
-  //           // outpost?
-  //           ));
-  // }
-
-  // Pair<Pose2d, Command> rightDelayTrenchSwipe() {
-  //   return Pair.of(
-  //       getStartPose(ChorPaths.RT_DELAY_SWIPE),
-  //       Commands.sequence(
-  //           // wait for other team to pickup, thene enter NZ
-  //           Commands.waitSeconds(3),
-  //           Commands.deadline(
-  //               Commands.sequence(
-  //                   followPathCommand(ChorPaths.RT_DELAY_SWIPE),
-  //                   followPathCommand(ChorPaths.RNEUTRAL_RTRENCH)),
-  //               IntakeRollerSubsystem.getInstance().runIntakeCommand()),
-  //           // score pickup
-  //           simpleScore(TargetType.HUB, 3)));
-  // }
 
   // -------------------------------- FACTORY METHODS -------------------------------- //
   public final FloorSubsystem floor = FloorSubsystem.getInstance();

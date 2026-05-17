@@ -326,10 +326,10 @@ public class RobotContainer {
     // RIGHT TOWER
     secondaryPanel
         .button(8)
-        .onTrue(
-            Commands.sequence(
-                Commands.parallel(
-                    feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+        .whileTrue(
+            Commands.parallel(
+                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+                Commands.sequence(
                     Commands.runOnce(
                         () ->
                             superstructure.setManualShootingParameters(

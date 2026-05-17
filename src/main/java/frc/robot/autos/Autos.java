@@ -10,7 +10,8 @@ public enum Autos {
   LEFT_DOUBLE_TRENCH(AutoFactory::leftTRDoubleSweep),
   LEFT_DOUBLETRENCH_CTCW(AutoFactory::leftTRDoubleSweepCTCW),
   RIGHT_DOUBLE_TRENCH(AutoFactory::rightTRDoubleSweep),
-  RIGHT_DOUBLETRENCH_CTCW(AutoFactory::rightTRDoubleSweepCTCW),
+  RIGHT_DOUBLETRENCH_CTCW(AutoFactory::rightTRDoubleCTCW),
+  LEFT_TR_TROUT(AutoFactory::leftTRTROut),
 
   // preload
   PRELOAD_ONLY_LEFT(AutoFactory::preloadOnlyLeft),
