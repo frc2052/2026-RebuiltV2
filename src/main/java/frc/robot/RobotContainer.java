@@ -224,6 +224,16 @@ public class RobotContainer {
                     Commands.waitSeconds(0.5),
                     Commands.parallel(feeder.runAtPctCommand(-0.5), stager.runAtPctCommand(-0.5))
                         .withTimeout(0.5))));
+    secondaryPanel
+        .button(9)
+        .whileTrue(scoringSequenceCommand())
+        .onFalse(
+            Commands.parallel(
+                superstructure.setStateCommand(SuperstructureState.TRENCH),
+                Commands.sequence(
+                    Commands.waitSeconds(0.5),
+                    Commands.parallel(feeder.runAtPctCommand(-0.5), stager.runAtPctCommand(-0.5))
+                        .withTimeout(0.5))));
     // .whileTrue(
     //     Commands.sequence(
     //         superstructure.setStateCommand(SuperstructureState.SHOOTING),
@@ -370,19 +380,19 @@ public class RobotContainer {
         .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
 
     // RIGHT TRENCH
-    secondaryPanel
-        .button(9)
-        .onTrue(
-            Commands.parallel(
-                feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
-                Commands.sequence(
-                    Commands.runOnce(
-                        () ->
-                            superstructure.setManualShootingParameters(
-                                HubShootingTable.getInstance()
-                                    .getShootingParameters(Meters.of(3.372)))),
-                    superstructure.setStateCommand(SuperstructureState.MANUAL))))
-        .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
+    // secondaryPanel
+    //     .button(9)
+    //     .onTrue(
+    //         Commands.parallel(
+    //             feeder.runAtVelocityCommand(RotationsPerSecond.of(85)),
+    //             Commands.sequence(
+    //                 Commands.runOnce(
+    //                     () ->
+    //                         superstructure.setManualShootingParameters(
+    //                             HubShootingTable.getInstance()
+    //                                 .getShootingParameters(Meters.of(3.372)))),
+    //                 superstructure.setStateCommand(SuperstructureState.MANUAL))))
+    //     .onFalse(superstructure.setStateCommand(SuperstructureState.TRENCH));
   }
 
   //   private void configureTestBindings() {

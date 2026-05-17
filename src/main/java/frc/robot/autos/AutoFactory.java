@@ -213,7 +213,7 @@ public class AutoFactory {
             postScoringCleanup()));
   }
 
-   Pair<Pose2d, Command> leftSingleSweepTernchReturn() {
+  Pair<Pose2d, Command> leftSingleSweepTernchReturn() {
     return Pair.of(
         getStartPose(ChorPaths.LTRENCH_LNEUTRAL1),
         Commands.sequence(
@@ -237,7 +237,8 @@ public class AutoFactory {
             Commands.deadline(
                 Commands.sequence(
                     followPathCommand(ChorPaths.LT_LOOP),
-                    Commands.deadline(followPathCommand(ChorPaths.LNEUTRAL_LTRENCH), idleShooter())),
+                    Commands.deadline(
+                        followPathCommand(ChorPaths.LNEUTRAL_LTRENCH), idleShooter())),
                 IntakeRollerSubsystem.getInstance().runIntakeCommand()),
             simpleScore(TargetType.HUB, 2)));
   }
