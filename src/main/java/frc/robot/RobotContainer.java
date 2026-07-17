@@ -10,8 +10,11 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.team2052.lib.helpers.MathHelpers;
 import com.team2052.lib.input.T16000MJoystick;
+import com.team2052.lib.vision.questnav.QuestNavSubsystem;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,6 +57,7 @@ public class RobotContainer {
   public final IntakePivotSubsystem intakePivot = IntakePivotSubsystem.getInstance();
   public final Superstructure superstructure = Superstructure.getInstance();
   public final HoodSubsystem hood = HoodSubsystem.getInstance();
+  public final QuestNavSubsystem questNav = new QuestNavSubsystem(new Transform3d());
   // public final LEDSubsystem leds = LEDSubsystem.getInstance();
 
   public final T16000MJoystick translationJoystick = new T16000MJoystick(0);
