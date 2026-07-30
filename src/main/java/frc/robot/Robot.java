@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.team2052.lib.vision.questnav.QuestNavSubsystem;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -14,6 +16,8 @@ import frc.robot.subsystems.vision.VisionSubsystem.LimelightCamera;
 import frc.robot.util.FieldConstants;
 
 public class Robot extends TimedRobot {
+
+  public final QuestNavSubsystem questNav = new QuestNavSubsystem(new Transform3d());
 
   private final RobotContainer robotContainer;
   private final AutoChooser autoChooser;
@@ -35,6 +39,7 @@ public class Robot extends TimedRobot {
     Superstructure.getInstance().setHasCalculatedShotProfileThisPeriod(false);
     CommandScheduler.getInstance().run();
     RobotState.getInstance().output();
+    questNav.questPeriodic();
   }
 
   @Override
