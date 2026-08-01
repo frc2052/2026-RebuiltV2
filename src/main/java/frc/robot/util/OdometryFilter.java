@@ -4,10 +4,14 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -25,6 +29,12 @@ public class OdometryFilter {
     private Pose2d lastWheelOdomPose = new Pose2d();
     private Pose2d lastQuestOdomPose = new Pose2d();
 
+    @Getter private Transform2d lastRecordedVelocity = new Transform2d();
+    @Getter private Transform2d lastRecordedAcceleration = new Transform2d();
+    @Getter private Transform2d lastRecordedJerk = new Transform2d();
+
+    @Getter private Matrix<N3, N1> lastRecordedSTD = VecBuilder.fill(0, 0, 0);
+
     private static OdometryFilter INSTANCE;
 
     public OdometryFilter getInstance() {
@@ -41,6 +51,7 @@ public class OdometryFilter {
     public void seedPose(Pose2d newPose) {
         currentPose = newPose;
         lastPoseTimestamp = Seconds.of(Timer.getFPGATimestamp());
+        lastRecordedSTD = VecBuilder.fill(0, 0, 0);
     }
 
     public void update(
@@ -99,10 +110,42 @@ public class OdometryFilter {
         Gaussian combinedVisionY = combineGaussians(visionY.toArray(new Gaussian[0]));
         Gaussian combinedVisionTheta = combineGaussians(visionTheta.toArray(new Gaussian[0]));
 
-        
+        // Pose2d meanOdomPose = new Pose2d(odomPoseX.getMean(), odomPoseY.getMean(), new Rotation2d(odomPoseTheta.getMean()));
+        // Pose2d meanVisionPose = new Pose2d(combinedVisionX.getMean(), combinedVisionY.getMean(), new Rotation2d(combinedVisionTheta.getMean()));
 
+        // Transform2d differenceInMean = meanVisionPose.minus(meanOdomPose);
 
+        Matrix<N3, N1> odomSTD = VecBuilder.fill(odomPoseX.getStd(), odomPoseY.getStd(), odomPoseTheta.getStd());
+        Matrix<N3, N1> compoundedSTD = lastRecordedSTD.times(deltaTimestamp.in(Seconds)).plus(odomSTD); // TENTATIVE, Maybe don't scale?
+        odomPoseX.setStd(compoundedSTD.getData()[0]);
+        odomPoseY.setStd(compoundedSTD.getData()[1]);
+        odomPoseTheta.setStd(compoundedSTD.getData()[2]);
+
+        Gaussian combinedX = combineGaussians(odomPoseX, combinedVisionX);
+        Gaussian combinedY = combineGaussians(odomPoseY, combinedVisionY);
+        Gaussian combinedTheta = combineGaussians(odomPoseTheta, combinedVisionTheta);
+
+        Pose2d outputPose = new Pose2d(combinedX.getMean(), combinedY.getMean(), new Rotation2d(combinedTheta.getMean()));
+        Matrix<N3, N1> newTotalSTD = VecBuilder.fill(combinedX.getStd(), combinedY.getStd(), combinedTheta.getStd());
+
+        // effectively tracking the first three derivatives
+        Transform2d newVelocity = outputPose.minus(currentPose).times(1.0 / deltaTimestamp.in(Seconds));
+        Transform2d newAcceleration = newVelocity.plus(lastRecordedVelocity.inverse()).times(1.0 / deltaTimestamp.in(Seconds));
+        Transform2d newJerk = newAcceleration.plus(lastRecordedAcceleration.inverse()).times(1.0 / deltaTimestamp.in(Seconds));
+
+        currentPose = outputPose;
+        lastRecordedVelocity = newVelocity;
+        lastRecordedAcceleration = newAcceleration;
+        lastRecordedJerk = newJerk;
         lastPoseTimestamp = newPoseTimestamp;
+        lastRecordedSTD = newTotalSTD.times(1.0 / deltaTimestamp.in(Seconds)); // counts as unscaling (remove if above scaling is removed)
+    }
+
+    public Pose2d getNextPredictedPose(Time deltaTimestamp) {
+        Transform2d predictedNewAcceleration = lastRecordedAcceleration.plus(lastRecordedJerk);
+        Transform2d predictedNewVelocity = lastRecordedVelocity.plus(predictedNewAcceleration);
+        Pose2d predictedNewPose = currentPose.plus(predictedNewVelocity.times(deltaTimestamp.in(Seconds)));
+        return predictedNewPose;
     }
 
     private Gaussian combineGaussians(Gaussian... gaussians) {
