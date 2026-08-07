@@ -66,7 +66,8 @@ public final class IntakeConstants {
       new ServoSubsystemConstants();
   public static final CANCoderConstants INTAKE_ENCODER_CONSTANTS = new CANCoderConstants();
 
-  public static final Angle ENCODER_OFFSET = Rotations.of(-0.0244140625);
+  public static final Angle ENCODER_OFFSET =
+      Rotations.of(-0.02734375); // Old offset b4 8/6/2026 = -0.0244140625, kevin zero
   public static final Angle POSITION_TOLERANCE_ANGLE = Degrees.of(3);
 
   static {
