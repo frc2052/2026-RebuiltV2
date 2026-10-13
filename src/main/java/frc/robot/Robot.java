@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -27,6 +28,8 @@ public class Robot extends TimedRobot {
         VisionSubsystem.getInstance()::visionPeriodic,
         Constants.VISION_LOOP_PERIOD,
         Constants.VISION_LOOP_OFFSET);
+
+    RobotController.setBrownoutVoltage(4.0); // MRI change
   }
 
   @Override

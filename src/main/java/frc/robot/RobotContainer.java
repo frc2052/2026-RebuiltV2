@@ -309,10 +309,17 @@ public class RobotContainer {
 
     // side buttons
     secondaryPanel.button(2).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
-    Trigger halfwayIntake = new Trigger(() -> secondaryPanel.getX() < 0.5);
+    Trigger halfwayIntake = new Trigger(() -> secondaryPanel.getX() < -0.5);
     halfwayIntake.onFalse(intakePivot.setCommand(IntakePosition.HALFWAY_POSITION));
     Trigger intakeDown = new Trigger(() -> secondaryPanel.getX() > 0.5);
     intakeDown.onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+    Trigger stopShooter = new Trigger(() -> secondaryPanel.getX() > 0.5);
+    stopShooter.onTrue(
+        new InstantCommand(
+            () ->
+                superstructure.setCurrentState(
+                    SuperstructureState
+                        .NONE))); // shooter.setGoalPoint(RotationsPerSecond.of(0))));
 
     // stow intake
     secondaryPanel.button(12).onFalse(intakePivot.setCommand(IntakePosition.STOW_POSITION));
@@ -322,6 +329,10 @@ public class RobotContainer {
 
     // intake out
     secondaryPanel.button(11).onFalse(intakePivot.setCommand(IntakePosition.OUT_POSITION));
+
+    // Former Backups
+    // secondaryPanel.button(12).whileTrue(intakePivot.manualUp());
+    // secondaryPanel.button(11).whileTrue(intakePivot.manualDown());
 
     // set hood to min angle
     secondaryPanel.button(10).onFalse(compressHopperCommand());

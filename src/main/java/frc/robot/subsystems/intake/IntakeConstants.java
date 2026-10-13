@@ -67,7 +67,11 @@ public final class IntakeConstants {
   public static final CANCoderConstants INTAKE_ENCODER_CONSTANTS = new CANCoderConstants();
 
   public static final Angle ENCODER_OFFSET =
-      Rotations.of(-0.02734375); // Old offset b4 8/6/2026 = -0.0244140625, kevin zero
+      Rotations.of(
+          -0.6884765625); // Rotations.of(-0.00659179); // Rotations.of(-0.02734375); // Old
+  // offset
+  // b4 8/6/2026 = -0.0244140625,
+  // kevin zero
   public static final Angle POSITION_TOLERANCE_ANGLE = Degrees.of(3);
 
   static {
@@ -100,8 +104,8 @@ public final class IntakeConstants {
 
     INTAKE_SERVO_CONSTANTS.softwareMax = MAX_INTAKE_ARM_ANGLE;
     INTAKE_SERVO_CONSTANTS.softwareMin = Rotations.of(0);
-    INTAKE_SERVO_CONSTANTS.forwardSoftLimitEnable = true;
-    INTAKE_SERVO_CONSTANTS.reverseSoftLimitEnable = true;
+    INTAKE_SERVO_CONSTANTS.forwardSoftLimitEnable = false; // Todo:
+    INTAKE_SERVO_CONSTANTS.reverseSoftLimitEnable = false;
     INTAKE_SERVO_CONSTANTS.enableSupplyCurrentLimit = true;
     INTAKE_SERVO_CONSTANTS.supplyCurrentLimit = Amps.of(20);
 

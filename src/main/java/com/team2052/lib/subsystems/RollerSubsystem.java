@@ -170,7 +170,13 @@ public class RollerSubsystem extends SubsystemBase {
     }
     leader.setControl(velocityControl.withVelocity(this.goalVelocity));
     // Logger.recordOutput(
-    // constants.name + "/Goal Velocity RPS", this.goalVelocity.in(RotationsPerSecond));
+    //     constants.name + "/Goal Velocity RPS", this.goalVelocity.in(RotationsPerSecond));
+    // SmartDashboard.putNumber(
+    //     constants.name + "/SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber(
+    //     constants.name + "/StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber(
+    //     constants.name + "/TorqueCurrent", leader.getTorqueCurrent().getValueAsDouble());
   }
 
   public void setGoalVelocityMotionMagic(AngularVelocity goalVelocity) {

@@ -51,7 +51,12 @@ public class ShooterSubsystem extends RollerSubsystem {
 
     SmartDashboard.putNumber("Goal Point", goalVelocity.in(RotationsPerSecond));
     SmartDashboard.putNumber("Shooter Speed", getVelocity().in(RotationsPerSecond));
-
+    SmartDashboard.putNumber(
+        "Shooter" + "/SupplyCurrent", leader.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Shooter" + "/StatorCurrent", leader.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Shooter" + "/TorqueCurrent", leader.getTorqueCurrent().getValueAsDouble());
     // if (goalPoint.in(RotationsPerSecond) != lastGoal.in(RotationsPerSecond)) {
     //   runningOpenLoop = true;
 

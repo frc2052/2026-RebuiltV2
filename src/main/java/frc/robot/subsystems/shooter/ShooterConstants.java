@@ -68,7 +68,7 @@ public final class ShooterConstants {
     ROLLER_CONFIG.slot0kDeadband = 0.5;
     ROLLER_CONFIG.sensorToMechanismRatio = 1;
     ROLLER_CONFIG.statorCurrentLimit = Amps.of(80);
-    ROLLER_CONFIG.enableStatorCurrentLimit = false;
+    ROLLER_CONFIG.enableStatorCurrentLimit = true; // MRI change
     ROLLER_CONFIG.supplyCurrentLimit = Amps.of(40);
     ROLLER_CONFIG.enableSupplyCurrentLimit = true;
   }

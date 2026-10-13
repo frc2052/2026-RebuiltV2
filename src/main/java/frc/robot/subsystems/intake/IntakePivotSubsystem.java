@@ -59,6 +59,14 @@ public class IntakePivotSubsystem extends ServoSubsystemWithCANCoder {
     setSetpointMotionMagic(goalAngle);
   }
 
+  // public Command manualUp() {
+  //   return Commands.runEnd(() -> leader.set(.2), () -> leader.set(0), this);
+  // }
+
+  // public Command manualDown() {
+  //   return Commands.runEnd(() -> leader.set(-.2), () -> leader.set(0), this);
+  // }
+
   public Angle boundAngle(Angle angle) {
     return Degrees.of(
         MathUtil.clamp(
