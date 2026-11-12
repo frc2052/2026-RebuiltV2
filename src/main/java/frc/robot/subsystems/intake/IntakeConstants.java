@@ -68,7 +68,7 @@ public final class IntakeConstants {
 
   public static final Angle ENCODER_OFFSET =
       Rotations.of(
-          -0.6884765625); // Rotations.of(-0.00659179); // Rotations.of(-0.02734375); // Old
+          -0.6923828125); // Rotations.of(-0.00659179); // Rotations.of(-0.02734375); // Old
   // offset
   // b4 8/6/2026 = -0.0244140625,
   // kevin zero
